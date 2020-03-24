@@ -1,0 +1,55 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Honest Chain</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href=" {{url_for('logout') }}"></a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+    
+    <div class="container">
+	    <form class="form-signin" method = "POST" action="/submitrequest">
+		    <h2 class="form-signin-heading">Create Request</h2>
+		    {{form.hidden_tag() }}
+		    {{ wtf.form_field(form.requestname) }}
+		    {{ wtf.form_field(form.requestDescription) }}
+		    {{ wtf.form_field(form.datasetname) }}
+		    {{ wtf.form_field(form.use) }}
+		    {{ wtf.form_field(form.store) }}
+		    {{ wtf.form_field(form.longdata) }}
+		    {{ wtf.form_field(form.soondata) }}
+		    {{ wtf.form_field(form.typeofdata) }}
+		    <button class="btn btn-lg btn-primary btn-block" type="submit">Submit Request</button>
+	    </form>
+    </div> <!-- /container -->
+    
+{% endblock %}

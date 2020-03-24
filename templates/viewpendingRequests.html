@@ -1,0 +1,70 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<script>
+        function appReq(reqid){
+               
+                var link = "{{url_for('approvereq', req_id ='reqid') }}".replace('reqid', reqid);
+                window.location.href= link;
+	}
+        function denyReq(reqid){
+
+                var link = "{{url_for('denyreq', req_id ='reqid') }}".replace('reqid', reqid);
+                window.location.href= link;
+        }
+</script>
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+ <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Requestname</th>
+                  <th>requestDescription</th>
+                  <th>Usage of data</th>
+		  <th>Storage of data </th>
+		  <th>How long data required</th>
+		  <th>How soon data required</th>
+		  <th>Type of data</th>
+		  <th>Risk Level</th>
+		  
+                </tr>
+              </thead>
+              <tbody>
+                
+			</thead>
+                    <tbody>
+			    <tr> 
+				    {% for pendingreq_info in pendingreq_info %}
+				    <td>{{pendingreq_info.requestname}}</td>
+                              	    <td>{{pendingreq_info.requestDescription}}</td>
+				    <td>{{pendingreq_info.use}}</td>
+				    <td>{{pendingreq_info.store}}</td>
+				    <td>{{pendingreq_info.longdata}}</td>
+				    <td>{{pendingreq_info.soondata}}</td>
+				    <td>{{pendingreq_info.typeofdata}}</td>
+				    <td>{{pendingreq_info.risk_level}}</td>
+                                 {% endfor %} 
+                            </tr>
+
+                    </tbody>
+                </table>
+		{% for pendingreq_info in pendingreq_info %}
+   
+		<button class="btn btn-lg btn-primary btn-block"  onclick = "appReq(' {{pendingreq_info.requestid}} ')" method = 'GET' type="button">Approve</button>
+		<button class="btn btn-lg btn-primary btn-block"  onclick = "denyReq('{{pendingreq_info.requestid}}')" method = 'GET' type="button">Deny</button>
+  
+	{% endfor %}	
+	</form>
+
+
+</div> <!-- /container -->
+{% endblock %}

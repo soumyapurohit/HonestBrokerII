@@ -1,0 +1,177 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+
+{% block styles %}
+{{super()}}
+<script>
+	function view(reqid){
+		document.getElementById(reqid).innerHTML = reqid;
+		//reqidnew  = "reqid"
+		var link = "{{url_for('viewmyreq', req_id ='reqid') }}".replace('reqid', reqid);
+		window.location.href= link;
+		//var base_url = window.location.origin;
+		//var page_url = '/viewmyreq';
+		//var parameters = '?req_id=' +reqid;
+		//var combine = base_url + page_url + parameters;
+		//window.location.href= link;
+		//window.open(combine);
+		//var page_url = "{url_for('viewmyreq')}";
+		//var parameters = '?req_id=' +reqid;
+		//var link  = page_url + parameters;
+		//window.location.href= link;
+		//document.getElementById('req').innerHTML = reqid;
+	}
+	//$('req').onclick(view()
+	//	{alert("hello world"); })
+	        function viewappInternal(reqid){
+                document.getElementById(reqid).innerHTML = reqid;
+                //reqidnew  = "reqid"
+                var link = "{{url_for('viewappInternal', req_id ='reqid') }}".replace('reqid', reqid);
+                window.location.href= link;
+		}
+
+                function viewdenied(reqid){
+			//document.getElementById(reqid).innerHTML = reqid;
+			var link = "{{url_for('viewdenied', req_id ='reqid') }}".replace('reqid', reqid);
+			window.location.href= link;
+                }
+</script>
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}">
+
+{% endblock %}
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+	<script src="{{ url_for('static', filename='viewrequest.js') }}"></script>
+	
+{% block content %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href=" {{url_for('logout') }}"></a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <!--    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Export</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item</a></li>
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+            <li><a href="">More navigation</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+          </ul>
+	</div>   -->
+       <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+               <h1 class="page-header">Welcome , {{name}}</h1>
+		<form action =" {{url_for('request') }} " method ="get">
+			<input type = "submit"class = "btn btn-info" value="New Request">
+		</form>
+	 	<div w3-include-html="/home/ubuntu/HonestChain/templates/bot/index_bot.html"></div>
+          <h2 class="sub-header">Pending Request</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Request name</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+			{% for new_request in request_info %}
+			<td><a href = "#"  onclick = "view('{{new_request.requestid}}')" id = '{{new_request.requestid}}'  method ="GET">{{new_request.requestid}}</a></td>
+			<td id = "requestname">{{new_request.requestname}}</td>
+			<td>{{new_request.requestDescription}}</td> 
+    			
+                </tr>
+		{% endfor %}
+              </tbody>
+            </table>
+            <h2 class="sub-header">Approved Request</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Request name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+				    {% for apprInternal_info in apprInternal_info %}
+				    <td><a href = "#"  onclick = "viewappInternal('{{apprInternal_info.requestid}}')" id = '{{apprInternal_info.requestid}}'  method ="GET">{{apprInternal_info.requestid}}</a></td>
+				    <td id = "requestname">{{apprInternal_info.requestname}}</td>
+                                    <td>{{apprInternal_info.requestDescription}}</td>
+                                    
+                            </tr>
+			    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <h2 class="sub-header">Denied</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+			    <th>ID</th>
+			<th>Request Name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                    {% for deniedInternal_info in deniedInternal_info %}
+                                    <td><a href = "#" id = '{{deniedInternal_info.requestid}}'  method ="GET">{{deniedInternal_info.requestid}}</a></td>
+                                    <td id = "requestname">{{deniedInternal_info.requestname}}</td>
+                                    <td>{{deniedInternal_info.requestDescription}}</td>
+                                   
+                            </tr>
+			    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+      </div>
+    </div>
+{% endblock %}
+                                                                                                                                                                                          
+                                                                                                                                                                                         
+                                                                                                                                                                                        
+                                                                                                                                                                                         
+                                                                                                                                                                                         

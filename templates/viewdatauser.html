@@ -1,0 +1,61 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+View Data
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<script>
+        function appReq(reqid){
+               
+                var link = "{{url_for('approvereq', req_id ='reqid') }}".replace('reqid', reqid);
+                window.location.href= link;
+	}
+        function denyReq(reqid){
+
+                var link = "{{url_for('denyreq', req_id ='reqid') }}".replace('reqid', reqid);
+                window.location.href= link;
+        }
+</script>
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+ <table class="table table-striped">
+              <thead>
+               
+			<th>
+			<tr><td>S.No</td>
+			<td>Description</td>
+		</tr>
+			</th>
+		  
+                
+              </thead>
+             
+                    <tbody>
+			     
+			 {% for i in range(0,rowcount) %}
+			 <tr>
+				    <td>{{i}}</td>
+				    <td>{{data[i]}}</td>
+			 </tr>
+                         {% endfor %} 
+			    
+
+                    </tbody>
+                </table>
+		{% for pendingreq_info in pendingreq_info %}
+   
+		<button class="btn btn-lg btn-primary btn-block"  onclick = "appReq(' {{pendingreq_info.requestid}} ')" method = 'GET' type="button">Approve</button>
+		<button class="btn btn-lg btn-primary btn-block"  onclick = "denyReq('{{pendingreq_info.requestid}}')" method = 'GET' type="button">Deny</button>
+  
+	{% endfor %}	
+	</form>
+
+
+</div> <!-- /container -->
+{% endblock %}
