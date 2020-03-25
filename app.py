@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, R
 from flask_bootstrap import Bootstrap
 from math import log, exp
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField, RadioField, SelectField
 from wtforms.validators import InputRequired, Email, Length
 from flask import flash
 from flask_sqlalchemy import SQLAlchemy
@@ -58,6 +58,30 @@ class RequestForm(UserMixin, db.Model):
     #requests = db.relationship('RequestForm', backref = 'user', lazy = True)
     #datasets = db.relationship('RequestForm', backref = 'dataset', lazy = True)
 
+class TrustChoice(UserMixin, db.Model):
+    trustchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    decision = db.Column(db.String(40))
+    trustchoices = db.relationship('TrustCalcForm', backref = 'trust_choice', lazy = 'dynamic')
+
+class TrustCalcForm(UserMixin, db.Model):
+    trustid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    staffread_policies = db.Column(db.String(40))
+    doc_attest = db.Column(db.String(40))
+    doc_review = db.Column(db.String(40))
+    staff_training = db.Column(db.String(40))
+    doc_training = db.Column(db.String(40))
+    desig_staff = db.Column(db.String(40))
+    assoc_receive = db.Column(db.String(40))
+    business = db.Column(db.String(40))
+    audit = db.Column(db.String(40))
+    written_report = db.Column(db.String(40))
+    sys_in = db.Column(db.String(40))
+    demonstrate = db.Column(db.String(40))
+    report = db.Column(db.String(40))
+    anonymous = db.Column(db.String(40))
+    ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
+    trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
+
 
 
 #class SelectFieldtypedata(db.Model):
@@ -65,7 +89,8 @@ class RequestForm(UserMixin, db.Model):
 
 #class ChoiceOpts(FlaskForm):
 #    opts = QuerySelectField(query_factory = choice_dataset, allow_blank =True)
-
+def choice_trustcalc():
+    return TrustChoice.query
 
 def choice_dataset():
     return Dataset.query
@@ -108,6 +133,22 @@ class CreateRequestForm(FlaskForm):
     #dstype = QuerySelectField(query_factory=choice_typeofdata, allow_blank=True)
     typeofdata=StringField('What type of data would you like to receive', validators=[InputRequired(), Length(min=4, max=40)])
 
+class CreateTrustCalcForm(FlaskForm):
+    #CaStatus = QuerySelectField('Enter your choice', choices=[('Yes', 'Yes'), ('No', 'No'), ('Uncertain', 'Uncertain')])
+     staffread_policies = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     doc_attest = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     doc_review = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     staff_training = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     doc_training = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     desig_staff = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     assoc_receive = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     business = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     audit  = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     written_report = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     sys_in = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     demonstrate = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     report = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     anonymous = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
 
 @app.route('/')
 def index():
@@ -207,6 +248,17 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/pendrequest', methods=['GET','POST'])
+def pendrequest():
+    print('in trust form')
+    form = CreateTrustCalcForm()
+    if form.validate_on_submit():
+        print('Form validated')
+    else:
+        print(form.errors)
+    return render_template('example2.html',form=form)
+
 
 @app.route('/submitrequest', methods=['GET','POST'])
 def submitrequest():

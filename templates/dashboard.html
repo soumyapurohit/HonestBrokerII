@@ -8,11 +8,9 @@ Dashboard
 {% block styles %}
 {{super()}}
 <script>
-	function view(reqid){
-		document.getElementById(reqid).innerHTML = reqid;
+	//function view(reqid){
+		//document.getElementById(reqid).innerHTML = reqid;
 		//reqidnew  = "reqid"
-		var link = "{{url_for('viewmyreq', req_id ='reqid') }}".replace('reqid', reqid);
-		window.location.href= link;
 		//var base_url = window.location.origin;
 		//var page_url = '/viewmyreq';
 		//var parameters = '?req_id=' +reqid;
@@ -24,7 +22,7 @@ Dashboard
 		//var link  = page_url + parameters;
 		//window.location.href= link;
 		//document.getElementById('req').innerHTML = reqid;
-	}
+	//}
 	//$('req').onclick(view()
 	//	{alert("hello world"); })
 	        function viewappInternal(reqid){
@@ -115,7 +113,7 @@ Dashboard
               <tbody>
                 <tr>
 			{% for new_request in request_info %}
-			<td><a href = "#"  onclick = "view('{{new_request.requestid}}')" id = '{{new_request.requestid}}'  method ="GET">{{new_request.requestid}}</a></td>
+			<td><a href = " {{url_for('pendrequest') }} ">{{new_request.requestid}}</a></td>
 			<td id = "requestname">{{new_request.requestname}}</td>
 			<td>{{new_request.requestDescription}}</td> 
     			
