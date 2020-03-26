@@ -99,6 +99,9 @@ Dashboard
 		<form action =" {{url_for('request') }} " method ="get">
 			<input type = "submit"class = "btn btn-info" value="New Request">
 		</form>
+		<form action =" {{url_for('hipaaform') }} " method ="get">
+                        <input type = "submit"class = "btn btn-info" value="New HIPAA Form Entry">
+                </form>
 	 	<div w3-include-html="/home/ubuntu/HonestChain/templates/bot/index_bot.html"></div>
           <h2 class="sub-header">Pending Request</h2>
           <div class="table-responsive">

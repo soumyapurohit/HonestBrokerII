@@ -61,7 +61,7 @@ class RequestForm(UserMixin, db.Model):
 class TrustChoice(UserMixin, db.Model):
     trustchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     decision = db.Column(db.String(40))
-    trustchoices = db.relationship('TrustCalcForm', backref = 'trust_choice', lazy = 'dynamic')
+    #trustchoices = db.relationship('TrustCalcForm', backref = 'trust_choice', lazy = 'dynamic')
 
 class TrustCalcForm(UserMixin, db.Model):
     trustid = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -80,7 +80,7 @@ class TrustCalcForm(UserMixin, db.Model):
     report = db.Column(db.String(40))
     anonymous = db.Column(db.String(40))
     ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
-    trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
+   # trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
 
 
 
@@ -249,6 +249,16 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+@app.route('/hipaaform', methods=['GET','POST'])
+def hipaaform():
+    print('in trust form')
+    form = CreateTrustCalcForm()
+    if form.validate_on_submit():
+        print('Form validated')
+    else:
+        print(form.errors)
+    return render_template('example2.html',form=form)
+
 @app.route('/pendrequest', methods=['GET','POST'])
 def pendrequest():
     print('in trust form')
@@ -259,6 +269,34 @@ def pendrequest():
         print(form.errors)
     return render_template('example2.html',form=form)
 
+@app.route('/submithipaaform', methods=['GET','POST'])
+def submithipaa():
+     print(current_user.username)
+     form = CreateTrustCalcForm()
+
+     staffread_policiesprint = form.staffread_policies.data.decision
+     doc_attestprint = form.doc_attest.data.decision
+     doc_reviewprint = form.doc_review.data.decision
+     staff_trainingprint = form.staff_training.data.decision
+     doc_trainingprint = form.doc_training.data.decision
+     desig_staffprint = form.desig_staff.data.decision
+     assoc_reviewprint = form.assoc_receive.data.decision
+     businessprint = form.business.data.decision
+     auditprint = form.audit.data.decision
+     written_reportprint = form.written_report.data.decision
+     sys_inprint = form.sys_in.data.decision
+     demonstrateprint = form.demonstrate.data.decision
+     reportprint = form.report.data.decision
+     anonymousprint = form.anonymous.data.decision
+     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id,staffread_policies = staffread_policiesprint, doc_attest = doc_attestprint, doc_review = doc_reviewprint, staff_training = staff_trainingprint, doc_training = doc_trainingprint, desig_staff = desig_staffprint, assoc_receive = assoc_reviewprint, business = businessprint, audit = auditprint, written_report = written_reportprint, sys_in = sys_inprint, demonstrate = demonstrateprint, report = reportprint, anonymous = anonymousprint)
+     db.session.add(new_hipaa_request)
+     db.session.commit()
+
+     request_info = RequestForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
+     apprInternal_info = RequestForm.query.filter_by(ownerid=current_user.id, status = 'approved').all()
+     deniedInternal_info = RequestForm.query.filter_by(ownerid=current_user.id, status= 'denied').all()
+
+     return render_template('dashboard.html',name = current_user.username, form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
 
 @app.route('/submitrequest', methods=['GET','POST'])
 def submitrequest():
