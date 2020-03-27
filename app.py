@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 from flask_bootstrap import Bootstrap
-from math import log, exp
+from math import log, exp, floor
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, RadioField, SelectField
 from wtforms.validators import InputRequired, Email, Length
@@ -26,7 +26,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 #conn = psycopg2.connect("host=hbcdm.ce9qkwq3sggt.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
 #cur = conn.cursor()
-conn = psycopg2.connect("host=hbcdm.ce9qkwq3sggt.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
+conn = psycopg2.connect("host=hbcdm.cdm9kks3s0wa.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
 cur = conn.cursor()
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -79,6 +79,11 @@ class TrustCalcForm(UserMixin, db.Model):
     demonstrate = db.Column(db.String(40))
     report = db.Column(db.String(40))
     anonymous = db.Column(db.String(40))
+    match = db.Column(db.String(10))
+    mismatch = db.Column(db.String(10))
+    undecided = db.Column(db.String(10))
+    beta = db.Column(db.String(10))
+    dirichlet = db.Column(db.String(10))
     ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
    # trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
 
@@ -187,8 +192,8 @@ def signup():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    conn = psycopg2.connect("host=hbcdm.ce9qkwq3sggt.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
-    cur = conn.cursor()
+    #conn = psycopg2.connect("host=hbcdm.ce9qkwq3sggt.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
+    #cur = conn.cursor()
     
     #result =cur.execute("SELECT dataset_risk FROM data_catalog where 'dataset_name' = %s", [datasetname])
     #stmt = "SELECT * FROM data_catalog WHERE dataset_name = %s"
@@ -288,7 +293,55 @@ def submithipaa():
      demonstrateprint = form.demonstrate.data.decision
      reportprint = form.report.data.decision
      anonymousprint = form.anonymous.data.decision
-     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id,staffread_policies = staffread_policiesprint, doc_attest = doc_attestprint, doc_review = doc_reviewprint, staff_training = staff_trainingprint, doc_training = doc_trainingprint, desig_staff = desig_staffprint, assoc_receive = assoc_reviewprint, business = businessprint, audit = auditprint, written_report = written_reportprint, sys_in = sys_inprint, demonstrate = demonstrateprint, report = reportprint, anonymous = anonymousprint)
+     
+     
+     templist = [staffread_policiesprint, doc_attestprint, doc_reviewprint, staff_trainingprint, doc_trainingprint, desig_staffprint, assoc_reviewprint, businessprint, auditprint, written_reportprint, sys_inprint, demonstrateprint, reportprint, anonymousprint]
+     if (current_user.username == 'internaluser'):
+         userrole = 'internal_user'
+     elif (current_user.username == 'externaluser'):
+         userrole = 'external_user'
+     postgreSQL_select_Query = "select * from data_policy  where data_policy.user_role = %s"
+     cur.execute(postgreSQL_select_Query, [userrole])
+     resultset = cur.fetchone()
+     d = (resultset[1:])
+     print(d)         
+     countmismatch = 0
+     countundecided = 0
+     countmatch = 0
+     for a,b in zip(templist, d):
+         if (a == 'Yes' and (b == 'R' or b  == None)):
+             countmatch += 1
+         elif (a == 'No' and b == 'R'):
+             countmismatch += 1
+         elif (a == 'No' and b == None):
+             countmatch += 1
+         elif (a == 'Uncertain' and b == 'R'):
+             countundecided += 1
+         elif (a == 'Uncertain' and b == None):
+             countmatch += 1
+     N = 14
+     # beta model trust calculation
+     alpha_c = floor(countmatch + ((countundecided*countmatch)/(countmatch+countmismatch)));
+     beta_c = N - alpha_c;
+     Ei = ((alpha_c + 1)/(alpha_c + beta_c + 2));
+     print('Beta model is',Ei)
+    
+     '''
+     # Formula 7 of trsut model
+     a = 0.5
+     Eb = (countmatch+1) / (countmatch+countmismatch+countundecided+3)
+     Eu = (countundecided+1) / (countmatch+countmismatch+countundecided+3)
+     Ew = Eb + a*Eu
+     rEw = log(Ew/(1-Ew))
+     if rEw > 0:
+         wi = 1 - exp(-abs(rEw))
+     elif rEw < 0:
+         wi = -(1 - exp(-abs(rEw)))
+     else:
+         wi = 0
+     print('dirichlet model is', wi)
+     '''
+     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id,staffread_policies = staffread_policiesprint, doc_attest = doc_attestprint, doc_review = doc_reviewprint, staff_training = staff_trainingprint, doc_training = doc_trainingprint, desig_staff = desig_staffprint, assoc_receive = assoc_reviewprint, business = businessprint, audit = auditprint, written_report = written_reportprint, sys_in = sys_inprint, demonstrate = demonstrateprint, report = reportprint, anonymous = anonymousprint, match = countmatch, mismatch = countmismatch, undecided = countundecided, beta = Ei, dirichlet = 0.5)
      db.session.add(new_hipaa_request)
      db.session.commit()
 
