@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 from flask_bootstrap import Bootstrap
 from math import log, exp, floor
+from decimal import *
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, RadioField, SelectField
 from wtforms.validators import InputRequired, Email, Length
@@ -84,6 +85,7 @@ class TrustCalcForm(UserMixin, db.Model):
     undecided = db.Column(db.String(10))
     beta = db.Column(db.String(10))
     dirichlet = db.Column(db.String(10))
+    status = db.Column(db.String(10))
     ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
    # trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
 
@@ -217,29 +219,29 @@ def dashboard():
     #conn.close()
     
 
-    pending_req = RequestForm.query.filter_by(status= 'pending').all()
-    approvedreq_info = RequestForm.query.filter_by(status= 'approved').all()
-    denyreq_info = RequestForm.query.filter_by(status= 'denied').all()
+    pending_req = TrustCalcForm.query.filter_by(status= 'pending').all()
+    approvedreq_info = TrustCalcForm.query.filter_by(status= 'approved').all()
+    denyreq_info = TrustCalcForm.query.filter_by(status= 'denied').all()
     for i in pending_req:
-        print("pending request id is",i.requestid)
+        print("pending request id is",i.trustid)
 
     
     if(current_user.username == 'Admin'):
         return render_template('dashboard_admin.html', name = current_user.username, pending_req= pending_req, approvedreq_info= approvedreq_info, denyreq_info=denyreq_info, resultset=resultset)
     elif(current_user.username == 'internaluser'):
         print('internal user dashboard')
-        apprInternal_info = RequestForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
-        request_info = RequestForm.query.filter_by(ownerid=current_user.id ,status = 'pending').all()
-        deniedInternal_info = RequestForm.query.filter_by(ownerid=current_user.id ,status = 'denied').all()
+        apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
+        request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'pending').all()
+        deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'denied').all()
         for i in apprInternal_info:
-            print("Internal user approved request is ",i.requestname)
+            print("Internal user approved HIPAA request is ",i.trustid)
         return render_template('dashboard.html', name = current_user.username, apprInternal_info= apprInternal_info, request_info=request_info, deniedInternal_info = deniedInternal_info, resultset = resultset)
     else:
         print('external user dashboard')
-        apprInternal_info = RequestForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
+        apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
         print('Id for external user is Hi',current_user.id)
-        request_info = RequestForm.query.filter_by(ownerid=current_user.id ,status = 'pending').all()
-        deniedInternal_info = RequestForm.query.filter_by(ownerid=current_user.id ,status = 'denied').all()
+        request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'pending').all()
+        deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'denied').all()
         for i in apprInternal_info:
             print("Internal user approved request is ",i.requestname)
         return render_template('dashboard_external.html', name = current_user.username, apprInternal_info= apprInternal_info, request_info=request_info, deniedInternal_info = deniedInternal_info, resultset = resultset)
@@ -323,16 +325,32 @@ def submithipaa():
      # beta model trust calculation
      alpha_c = floor(countmatch + ((countundecided*countmatch)/(countmatch+countmismatch)));
      beta_c = N - alpha_c;
-     Ei = ((alpha_c + 1)/(alpha_c + beta_c + 2));
+     Ei = float(alpha_c + 1)/float(alpha_c + beta_c + 2);
      print('Beta model is',Ei)
     
-     '''
-     # Formula 7 of trsut model
-     a = 0.5
-     Eb = (countmatch+1) / (countmatch+countmismatch+countundecided+3)
-     Eu = (countundecided+1) / (countmatch+countmismatch+countundecided+3)
-     Ew = Eb + a*Eu
-     rEw = log(Ew/(1-Ew))
+     
+     # Formula 7 of trust model
+     a = 0.7
+     Eb = float(countmatch+1.0) / float(countmatch+countmismatch+countundecided+3.0)
+     Eu = float(countundecided+1.0) / float(countmatch+countmismatch+countundecided+3.0)
+     Ew = (Eb + a*Eu)
+     print('match,mismatch,undecided',countmatch,countmismatch,countundecided)
+     print(countmatch+1)
+     print(countmatch+countmismatch+countundecided+3)
+     print('a',a)
+     print('Eb',Eb)
+     print("{:.30f}".format(Eb));
+     print('Eu', Eu)
+     print("{:.30f}".format(Eu));
+     print('Ew is',Ew)
+     print("{:.30f}".format(Ew));
+     #print("{:.30f}".format(Ew));
+     #getcontext().prec = 7
+     #c = Decimal(Ew/(1-Ew))
+     #print('decimal val',c)
+     rEw = log(Ew)/log((1-Ew))
+     print('rEw',rEw)
+     #rEw = log(c)
      if rEw > 0:
          wi = 1 - exp(-abs(rEw))
      elif rEw < 0:
@@ -340,16 +358,22 @@ def submithipaa():
      else:
          wi = 0
      print('dirichlet model is', wi)
-     '''
-     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id,staffread_policies = staffread_policiesprint, doc_attest = doc_attestprint, doc_review = doc_reviewprint, staff_training = staff_trainingprint, doc_training = doc_trainingprint, desig_staff = desig_staffprint, assoc_receive = assoc_reviewprint, business = businessprint, audit = auditprint, written_report = written_reportprint, sys_in = sys_inprint, demonstrate = demonstrateprint, report = reportprint, anonymous = anonymousprint, match = countmatch, mismatch = countmismatch, undecided = countundecided, beta = Ei, dirichlet = 0.5)
+    
+     status = 'pending'
+     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id,staffread_policies = staffread_policiesprint, doc_attest = doc_attestprint, doc_review = doc_reviewprint, staff_training = staff_trainingprint, doc_training = doc_trainingprint, desig_staff = desig_staffprint, assoc_receive = assoc_reviewprint, business = businessprint, audit = auditprint, written_report = written_reportprint, sys_in = sys_inprint, demonstrate = demonstrateprint, report = reportprint, anonymous = anonymousprint, match = countmatch, mismatch = countmismatch, undecided = countundecided, beta = Ei, dirichlet = 0.5, status = status)
      db.session.add(new_hipaa_request)
      db.session.commit()
 
-     request_info = RequestForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
-     apprInternal_info = RequestForm.query.filter_by(ownerid=current_user.id, status = 'approved').all()
-     deniedInternal_info = RequestForm.query.filter_by(ownerid=current_user.id, status= 'denied').all()
+     request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
+     for i in request_info:
+         print("the trust id is", i.trustid)
+     apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'approved').all()
+     deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status= 'denied').all()
 
-     return render_template('dashboard.html',name = current_user.username, form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
+     if(current_user.username == 'internaluser'):
+         return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
+     elif(current_user.username == 'externaluser'):
+         return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
 
 @app.route('/submitrequest', methods=['GET','POST'])
 def submitrequest():
@@ -448,28 +472,28 @@ def viewmyreq(req_id):
 @login_required
 def viewpendingreq(req_id):
     
-    reqinfo = RequestForm.query.filter_by(requestid=req_id, status = 'pending').all()
-    for i in reqinfo:
-        print('The dataset id is',i.datasetid)
+    #reqinfo = TrustCalcForm.query.filter_by(requestid=req_id, status = 'pending').all()
+    #for i in reqinfo:
+        #print('The dataset id is',i.datasetid)
     #postgreSQL_select_Query = "select * from data_catalog  where data_catalog.dataset_name = %s"
     #cur.execute(postgreSQL_select_Query, [datasetprint])
     #resultset = cur.fetchone()
-    pendingreq_info = RequestForm.query.filter_by(requestid=req_id).all()
-    for i in pendingreq_info:
-        datasetinfo = Dataset.query.filter_by(datasetid = i.datasetid).all()
-    for j in datasetinfo:
-        dataset_name = j.nameset
-    pg_query = 'select * from data_catalog where dataset_name = %s'
-    cur.execute(pg_query,[dataset_name])
-    record = cur.fetchone()
-    print("Result",record)
+    pendingreq_info = TrustCalcForm.query.filter_by(trustid=req_id).all()
+    #for i in pendingreq_info:
+    #    datasetinfo = Dataset.query.filter_by(datasetid = i.datasetid).all()
+    #for j in datasetinfo:
+    #    dataset_name = j.nameset
+    #pg_query = 'select * from data_catalog where dataset_name = %s'
+    #cur.execute(pg_query,[dataset_name])
+    #record = cur.fetchone()
+    #print("Result",record)
 
     
     
     approvedreq_info = RequestForm.query.filter_by(status= 'approved').all()
     denyreq_info = RequestForm.query.filter_by(status= 'denied').all()
-
-    return render_template('viewpendingRequests.html', pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info, record =record)
+    return render_template('viewpendingRequests.html', pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info)
+    #return render_template('viewpendingRequests.html', pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info, record =record)
 # have to modify
 @app.route('/viewappInternal/<req_id>', methods = ['GET',' POST'])
 @login_required
@@ -516,26 +540,26 @@ def viewdenied(req_id):
 def approvereq(req_id):
     
 
-    pendingreq_info = RequestForm.query.filter_by(requestid=req_id).all()
+    pendingreq_info = TrustCalcForm.query.filter_by(trustid=req_id).all()
     for i in pendingreq_info:
         i.status = 'approved'
         db.session.commit()
-    approvedreq_info = RequestForm.query.filter_by(status = 'approved').all()
-    denyreq_info = RequestForm.query.filter_by(status= 'denied').all()
-    pending_req = RequestForm.query.filter_by(status= 'pending').all()
-    for j in approvedreq_info:
-        print("Approved request is",j.requestname)
+    approvedreq_info = TrustCalcForm.query.filter_by(status = 'approved').all()
+    denyreq_info = TrustCalcForm.query.filter_by(status= 'denied').all()
+    pending_req = TrustCalcForm.query.filter_by(status= 'pending').all()
+    #for j in approvedreq_info:
+        #print("Approved request is",j.requestname)
     
-    for i in pendingreq_info:
-        datasetinfo = Dataset.query.filter_by(datasetid = i.datasetid).all()
-    for j in datasetinfo:
-        dataset_name = j.nameset
-    pg_query = 'select * from data_catalog where dataset_name = %s'
-    cur.execute(pg_query,[dataset_name])
-    record = cur.fetchone()
-    print("Result",record)
+    #for i in pendingreq_info:
+    #    datasetinfo = Dataset.query.filter_by(datasetid = i.datasetid).all()
+    #for j in datasetinfo:
+    #    dataset_name = j.nameset
+    #pg_query = 'select * from data_catalog where dataset_name = %s'
+    #cur.execute(pg_query,[dataset_name])
+    #record = cur.fetchone()
+    #print("Result",record)
 
-    return render_template('dashboard_admin.html', pending_req=pending_req, record = record, denyreq_info =denyreq_info, approvedreq_info = approvedreq_info)
+    return render_template('dashboard_admin.html', pending_req=pending_req, denyreq_info =denyreq_info, approvedreq_info = approvedreq_info)
 
 @app.route('/approvedadmin/<req_id>', methods = ['GET',' POST'])
 @login_required
@@ -560,13 +584,13 @@ def approvedadmin(req_id):
 @login_required
 def denyreq(req_id):
 
-    pendingreq_info = RequestForm.query.filter_by(requestid=req_id).all()
-    pending_req = RequestForm.query.filter_by(status= 'pending').all()
-    approvedreq_info = RequestForm.query.filter_by(status= 'approved').all()
+    pendingreq_info = TrustCalcForm.query.filter_by(trustid=req_id).all()
+    pending_req = TrustCalcForm.query.filter_by(status= 'pending').all()
+    approvedreq_info = TrustCalcForm.query.filter_by(status= 'approved').all()
     for i in pendingreq_info:
         i.status = 'denied'
         db.session.commit()
-    denyreq_info = RequestForm.query.filter_by(status = 'denied').all()
+    denyreq_info = TrustCalcForm.query.filter_by(status = 'denied').all()
 
 
     return render_template('dashboard_admin.html', pending_req= pending_req, approvedreq_info=approvedreq_info, denyreq_info = denyreq_info)

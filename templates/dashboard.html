@@ -116,9 +116,9 @@ Dashboard
               <tbody>
                 <tr>
 			{% for new_request in request_info %}
-			<td><a href = " {{url_for('pendrequest') }} ">{{new_request.requestid}}</a></td>
-			<td id = "requestname">{{new_request.requestname}}</td>
-			<td>{{new_request.requestDescription}}</td> 
+			<td><a href = " {{url_for('pendrequest') }} ">{{new_request.trustid}}</a></td>
+			<td id = "requestname">{{new_request.status}}</td>
+			<td>{{new_request.status}}</td> 
     			
                 </tr>
 		{% endfor %}
@@ -137,9 +137,9 @@ Dashboard
                     <tbody>
                             <tr>
 				    {% for apprInternal_info in apprInternal_info %}
-				    <td><a href = "#"  onclick = "viewappInternal('{{apprInternal_info.requestid}}')" id = '{{apprInternal_info.requestid}}'  method ="GET">{{apprInternal_info.requestid}}</a></td>
-				    <td id = "requestname">{{apprInternal_info.requestname}}</td>
-                                    <td>{{apprInternal_info.requestDescription}}</td>
+				    <td><a href = "#"  onclick = "viewappInternal('{{apprInternal_info.trustid}}')" id = '{{apprInternal_info.trustid}}'  method ="GET">{{apprInternal_info.trustid}}</a></td>
+				    <td id = "requestname">{{apprInternal_info.status}}</td>
+                                    <td>{{apprInternal_info.status}}</td>
                                     
                             </tr>
 			    {% endfor %}
@@ -159,9 +159,9 @@ Dashboard
                     <tbody>
                             <tr>
                                     {% for deniedInternal_info in deniedInternal_info %}
-				    <td><a href = "#"  id = '{{deniedInternal_info.requestid}}' method ="GET">{{deniedInternal_info.requestid}}</a></td>
-                                    <td id = "requestname">{{deniedInternal_info.requestname}}</td>
-                                    <td>{{deniedInternal_info.requestDescription}}</td>
+				    <td><a href = "#"  id = '{{deniedInternal_info.trustid}}' method ="GET">{{deniedInternal_info.trustid}}</a></td>
+                                    <td id = "requestname">{{deniedInternal_info.status}}</td>
+                                    <td>{{deniedInternal_info.status}}</td>
                                    
                             </tr>
 			    {% endfor %}

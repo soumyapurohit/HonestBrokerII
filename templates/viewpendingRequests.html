@@ -27,14 +27,23 @@ Sign Up
  <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Requestname</th>
-                  <th>requestDescription</th>
-                  <th>Usage of data</th>
-		  <th>Storage of data </th>
-		  <th>How long data required</th>
-		  <th>How soon data required</th>
-		  <th>Type of data</th>
-		  <th>Risk Level</th>
+                  <th>Staffread Policies</th>
+                  <th>Doc Attest</th>
+                  <th>Doc Review</th>
+		  <th>Staff Training</th>
+		  <th>Doc Training</th>
+		  <th>Desig Staff</th>
+		  <th>Assoc Receive</th>
+		  <th>Business</th>
+		  <th>Audit</th>
+		  <th>Written Report</th>
+		  <th>Sys In</th>
+		  <th>Demonstrate</th>
+		  <th>Report</th>
+		  <th>Anonymous</th>
+		  <th>Beta Value</th>
+		  <th>Dirichlet value</th>
+		 
 		  
                 </tr>
               </thead>
@@ -44,14 +53,22 @@ Sign Up
                     <tbody>
 			    <tr> 
 				    {% for pendingreq_info in pendingreq_info %}
-				    <td>{{pendingreq_info.requestname}}</td>
-                              	    <td>{{pendingreq_info.requestDescription}}</td>
-				    <td>{{pendingreq_info.use}}</td>
-				    <td>{{pendingreq_info.store}}</td>
-				    <td>{{pendingreq_info.longdata}}</td>
-				    <td>{{pendingreq_info.soondata}}</td>
-				    <td>{{pendingreq_info.typeofdata}}</td>
-				    <td>{{pendingreq_info.risk_level}}</td>
+				    <td>{{pendingreq_info.staffread_policies}}</td>
+                              	    <td>{{pendingreq_info.doc_attest}}</td>
+				    <td>{{pendingreq_info.doc_review}}</td>
+				    <td>{{pendingreq_info.staff_training}}</td>
+				    <td>{{pendingreq_info.doc_training}}</td>
+				    <td>{{pendingreq_info.desig_staff}}</td>
+				    <td>{{pendingreq_info.assoc_receive}}</td>
+				    <td>{{pendingreq_info.business}}</td>
+				    <td>{{pendingreq_info.audit}}</td>
+				    <td>{{pendingreq_info.written_report}}</td>
+				    <td>{{pendingreq_info.sys_in}}</td>
+				    <td>{{pendingreq_info.demonstrate}}</td>
+				    <td>{{pendingreq_info.report}}</td>
+				    <td>{{pendingreq_info.anonymous}}</td>
+				    <td>{{pendingreq_info.beta}}</td>
+				    <td>{{pendingreq_info.dirichlet}}</td>
                                  {% endfor %} 
                             </tr>
 
@@ -59,8 +76,8 @@ Sign Up
                 </table>
 		{% for pendingreq_info in pendingreq_info %}
    
-		<button class="btn btn-lg btn-primary btn-block"  onclick = "appReq(' {{pendingreq_info.requestid}} ')" method = 'GET' type="button">Approve</button>
-		<button class="btn btn-lg btn-primary btn-block"  onclick = "denyReq('{{pendingreq_info.requestid}}')" method = 'GET' type="button">Deny</button>
+		<button class="btn btn-lg btn-primary btn-block"  onclick = "appReq(' {{pendingreq_info.trustid}} ')" method = 'GET' type="button">Approve</button>
+		<button class="btn btn-lg btn-primary btn-block"  onclick = "denyReq('{{pendingreq_info.trustid}}')" method = 'GET' type="button">Deny</button>
   
 	{% endfor %}	
 	</form>
