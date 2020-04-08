@@ -63,7 +63,7 @@ Dashboard
             <li><a href="#">Dashboard</a></li>
             <li><a href="#">Settings</a></li>
             <li><a href="#">Profile</a></li>
-            <li><a href=" {{url_for('logout') }}"></a></li>
+	    <li><a href=" {{url_for('logout') }}">Logout</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -101,6 +101,9 @@ Dashboard
 		</form>
 		<form action =" {{url_for('hipaaform') }} " method ="get">
                         <input type = "submit"class = "btn btn-info" value="New HIPAA Form Entry">
+                </form>
+		<form action =" {{url_for('identifierform') }} " method ="get">
+                        <input type = "submit"class = "btn btn-info" value="Identifier Form Entry">
                 </form>
 	 	<div w3-include-html="/home/ubuntu/HonestChain/templates/bot/index_bot.html"></div>
           <h2 class="sub-header">Pending Request</h2>

@@ -27,20 +27,24 @@ Sign Up
  <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Staffread Policies</th>
-                  <th>Doc Attest</th>
-                  <th>Doc Review</th>
-		  <th>Staff Training</th>
-		  <th>Doc Training</th>
-		  <th>Desig Staff</th>
-		  <th>Assoc Receive</th>
-		  <th>Business</th>
-		  <th>Audit</th>
-		  <th>Written Report</th>
-		  <th>Sys In</th>
-		  <th>Demonstrate</th>
-		  <th>Report</th>
-		  <th>Anonymous</th>
+                  <th>Radiology Images</th>
+                  <th>Radiology Imaging Reports</th>
+		  <th>EKG</th>
+		  <th>Progress Notes</th>
+		  <th>History</th>
+		  <th>Operational Report</th>
+		  <th>Pathology Report</th>
+		  <th>Laboratory Report</th>
+			<th>Photographs</th>
+		  <th>Discharge Summaries</th>
+		  <th>Health Care Billing</th>
+			<th>Consultation</th>
+		  <th>Medication</th>
+		  <th>Emergency</th>
+		  <th>Dental</th>
+		  <th>Demographic</th>
+		  <th>Question</th>
+		  <th>Audiotape</th>
 		  <th>Beta Value</th>
 		  <th>Dirichlet value</th>
 		 
@@ -49,25 +53,64 @@ Sign Up
               </thead>
               <tbody>
                 
-			</thead>
-                    <tbody>
+			
+                   
 			    <tr> 
 				    {% for pendingreq_info in pendingreq_info %}
-				    <td>{{pendingreq_info.staffread_policies}}</td>
-                              	    <td>{{pendingreq_info.doc_attest}}</td>
-				    <td>{{pendingreq_info.doc_review}}</td>
-				    <td>{{pendingreq_info.staff_training}}</td>
-				    <td>{{pendingreq_info.doc_training}}</td>
-				    <td>{{pendingreq_info.desig_staff}}</td>
-				    <td>{{pendingreq_info.assoc_receive}}</td>
-				    <td>{{pendingreq_info.business}}</td>
-				    <td>{{pendingreq_info.audit}}</td>
-				    <td>{{pendingreq_info.written_report}}</td>
-				    <td>{{pendingreq_info.sys_in}}</td>
-				    <td>{{pendingreq_info.demonstrate}}</td>
-				    <td>{{pendingreq_info.report}}</td>
-				    <td>{{pendingreq_info.anonymous}}</td>
+				    <td>{{pendingreq_info.radiology_images}}</td>
+			    
+			   
+                              	    <td>{{pendingreq_info.radiology_imaging_reports}}</td>
+			    
+				    <td>{{pendingreq_info.ekg}}</td>
+			    
+				    <td>{{pendingreq_info.progress_notes}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.history_phy}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.oper_report}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.path_report}}</td>
+			   
+			   
+				    <td>{{pendingreq_info.lab_report}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.photographs}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.discharge_summaries}}</td>
+			    
+			    
+				    <td>{{pendingreq_info.health_care_billing}}</td>
+			   
+			    
+				    <td>{{pendingreq_info.consult}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.medication}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.emergency}}</td>
+			    
+			    
+				    <td>{{pendingreq_info.dental}}</td>
+			    
+				    <td>{{pendingreq_info.demographic}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.question}}</td>
+			    
+			   
+				    <td>{{pendingreq_info.audiotape}}</td>
+			    
+			    
 				    <td>{{pendingreq_info.beta}}</td>
+			    
+			    
 				    <td>{{pendingreq_info.dirichlet}}</td>
                                  {% endfor %} 
                             </tr>

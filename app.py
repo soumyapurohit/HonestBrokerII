@@ -58,6 +58,14 @@ class RequestForm(UserMixin, db.Model):
     datasetid =db.Column(db.Integer, db.ForeignKey('dataset.datasetid'), nullable=False)
     #requests = db.relationship('RequestForm', backref = 'user', lazy = True)
     #datasets = db.relationship('RequestForm', backref = 'dataset', lazy = True)
+class IrbInfo(UserMixin, db.Model):
+    irbunique = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    irb_id = db.Column(db.String(10))
+
+class ItemInfo(UserMixin, db.Model):
+    itemid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    itemname = db.Column(db.String(40))
+    itemunique = db.Column(db.String(10))
 
 class TrustChoice(UserMixin, db.Model):
     trustchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -66,20 +74,26 @@ class TrustChoice(UserMixin, db.Model):
 
 class TrustCalcForm(UserMixin, db.Model):
     trustid = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    staffread_policies = db.Column(db.String(40))
-    doc_attest = db.Column(db.String(40))
-    doc_review = db.Column(db.String(40))
-    staff_training = db.Column(db.String(40))
-    doc_training = db.Column(db.String(40))
-    desig_staff = db.Column(db.String(40))
-    assoc_receive = db.Column(db.String(40))
-    business = db.Column(db.String(40))
-    audit = db.Column(db.String(40))
-    written_report = db.Column(db.String(40))
-    sys_in = db.Column(db.String(40))
-    demonstrate = db.Column(db.String(40))
-    report = db.Column(db.String(40))
-    anonymous = db.Column(db.String(40))
+    radiology_images = db.Column(db.String(10))
+    radiology_imaging_reports = db.Column(db.String(10))
+    ekg = db.Column(db.String(10))
+    progress_notes = db.Column(db.String(10))
+    history_phy = db.Column(db.String(10))
+    oper_report = db.Column(db.String(10))
+    path_report = db.Column(db.String(10))
+    lab_report = db.Column(db.String(10))
+    photographs = db.Column(db.String(10))
+    #ssn = db.Column(db.String(10))
+    discharge_summaries = db.Column(db.String(10))
+    health_care_billing = db.Column(db.String(10))
+    consult = db.Column(db.String(10))
+    medication = db.Column(db.String(10))
+    emergency = db.Column(db.String(10))
+    dental = db.Column(db.String(10))
+    demographic = db.Column(db.String(10))
+    question = db.Column(db.String(10))
+    audiotape = db.Column(db.String(10))
+    #other = db.Column(db.String(10))
     match = db.Column(db.String(10))
     mismatch = db.Column(db.String(10))
     undecided = db.Column(db.String(10))
@@ -89,13 +103,37 @@ class TrustCalcForm(UserMixin, db.Model):
     ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
    # trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
 
-
+class IdentifierCalcForm(UserMixin, db.Model):
+    identifier = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    name = db.Column(db.String(10))
+    address = db.Column(db.String(10))
+    elements_of_dates = db.Column(db.String(10))
+    telephone_numbers = db.Column(db.String(10))
+    fax_numbers = db.Column(db.String(10))
+    email_address = db.Column(db.String(10))
+    ssn = db.Column(db.String(10))
+    medical_record_no = db.Column(db.String(10))
+    health_plan = db.Column(db.String(10))
+    account_no =  db.Column(db.String(10))
+    certificate_or_license = db.Column(db.String(10))
+    any_vehicle = db.Column(db.String(10))
+    web_url =db.Column(db.String(10))
+    ip_address = db.Column(db.String(10))
+    biometric_identifier = db.Column(db.String(10))
+    photographic_image = db.Column(db.String(10))
+    any_other_characteristics = db.Column(db.String(10))
+    ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
+    
 
 #class SelectFieldtypedata(db.Model):
 #    datatype = db.Column(db.String(40))
 
 #class ChoiceOpts(FlaskForm):
 #    opts = QuerySelectField(query_factory = choice_dataset, allow_blank =True)
+
+def choice_irb():
+    return IrbInfo.query
+
 def choice_trustcalc():
     return TrustChoice.query
 
@@ -142,21 +180,27 @@ class CreateRequestForm(FlaskForm):
 
 class CreateTrustCalcForm(FlaskForm):
     #CaStatus = QuerySelectField('Enter your choice', choices=[('Yes', 'Yes'), ('No', 'No'), ('Uncertain', 'Uncertain')])
-     staffread_policies = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     doc_attest = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     doc_review = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     staff_training = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     doc_training = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     desig_staff = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     assoc_receive = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     business = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     audit  = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     written_report = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     sys_in = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     demonstrate = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     report = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-     anonymous = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-
+     irb_id = QuerySelectField(query_factory=choice_irb, allow_blank=True, get_label = 'irb_id')
+     radiology_images = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     radiology_imaging_reports = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     ekg = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     progress_notes = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     history_phy = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     oper_report = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     path_report = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     lab_report = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     photographs  = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     #ssn = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     discharge_summaries = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     health_care_billing = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     consult = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     medication = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     emergency = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     dental = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     demographic = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     question = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     audiotape = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     #other = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -279,53 +323,73 @@ def pendrequest():
 @app.route('/submithipaaform', methods=['GET','POST'])
 def submithipaa():
      print(current_user.username)
-     form = CreateTrustCalcForm()
+     form = CreateTrustCalcForm() 
+     irb_id = form.irb_id.data.irb_id
 
-     staffread_policiesprint = form.staffread_policies.data.decision
-     doc_attestprint = form.doc_attest.data.decision
-     doc_reviewprint = form.doc_review.data.decision
-     staff_trainingprint = form.staff_training.data.decision
-     doc_trainingprint = form.doc_training.data.decision
-     desig_staffprint = form.desig_staff.data.decision
-     assoc_reviewprint = form.assoc_receive.data.decision
-     businessprint = form.business.data.decision
-     auditprint = form.audit.data.decision
-     written_reportprint = form.written_report.data.decision
-     sys_inprint = form.sys_in.data.decision
-     demonstrateprint = form.demonstrate.data.decision
-     reportprint = form.report.data.decision
-     anonymousprint = form.anonymous.data.decision
+     radiology_images = form.radiology_images.data.decision
+     radiology_imaging_reports = form.radiology_imaging_reports.data.decision
+     ekg = form.ekg.data.decision
+     progress_notes = form.progress_notes.data.decision
+     history_phy = form.history_phy.data.decision
+     oper_report = form.oper_report.data.decision
+     path_report = form.path_report.data.decision
+     lab_report = form.lab_report.data.decision
+     photographs = form.photographs.data.decision
+     #ssn = form.ssn.data.decision
+     discharge_summaries = form.discharge_summaries.data.decision
+     health_care_billing = form.health_care_billing.data.decision
+     consult = form.consult.data.decision
+     medication = form.medication.data.decision
+     emergency  = form.emergency.data.decision
+     dental = form.dental.data.decision
+     demographic = form.demographic.data.decision
+     question = form.question.data.decision
+     audiotape = form.audiotape.data.decision
+     #other = form.other.data.decision
      
      
-     templist = [staffread_policiesprint, doc_attestprint, doc_reviewprint, staff_trainingprint, doc_trainingprint, desig_staffprint, assoc_reviewprint, businessprint, auditprint, written_reportprint, sys_inprint, demonstrateprint, reportprint, anonymousprint]
+     templist = [radiology_images, radiology_imaging_reports, ekg, progress_notes, history_phy, oper_report, path_report, lab_report, photographs, discharge_summaries, health_care_billing, consult, medication, emergency, dental, demographic, question, audiotape]
      if (current_user.username == 'internaluser'):
          userrole = 'internal_user'
      elif (current_user.username == 'externaluser'):
          userrole = 'external_user'
-     postgreSQL_select_Query = "select * from data_policy  where data_policy.user_role = %s"
-     cur.execute(postgreSQL_select_Query, [userrole])
+
+     
+     #item_select_query = "select itemunique from item_info  where itemname = radiology_images";
+     #item_info = ItemInfo.query.filter_by(itemname=radiology_images).all()
+
+     #print('after item info')
+     #print(item_info)
+     #for i in item_info:
+     #    print('item details',i)
+
+     postgreSQL_select_Query = "select * from data_policy_domain  where data_policy_domain.irb_number = %s"
+     cur.execute(postgreSQL_select_Query, [irb_id])
      resultset = cur.fetchone()
-     d = (resultset[1:])
-     print(d)         
+     print('resultset is',resultset)
+     d = resultset[1:]
+     
+            
      countmismatch = 0
      countundecided = 0
      countmatch = 0
      for a,b in zip(templist, d):
-         if (a == 'Yes' and (b == 'R' or b  == None)):
+         if (a == 'Yes' and (b == '1' or b  == None)):
              countmatch += 1
-         elif (a == 'No' and b == 'R'):
+         elif (a == 'No' and b == '1'):
              countmismatch += 1
          elif (a == 'No' and b == None):
              countmatch += 1
-         elif (a == 'Uncertain' and b == 'R'):
+         elif (a == 'Uncertain' and b == '1'):
              countundecided += 1
          elif (a == 'Uncertain' and b == None):
              countmatch += 1
-     N = 14
+     N = 18
      # beta model trust calculation
      alpha_c = floor(countmatch + ((countundecided*countmatch)/(countmatch+countmismatch)));
      beta_c = N - alpha_c;
      Ei = float(alpha_c + 1)/float(alpha_c + beta_c + 2);
+     Ei = format(Ei, '.2f')
      print('Beta model is',Ei)
     
      
@@ -334,20 +398,7 @@ def submithipaa():
      Eb = float(countmatch+1.0) / float(countmatch+countmismatch+countundecided+3.0)
      Eu = float(countundecided+1.0) / float(countmatch+countmismatch+countundecided+3.0)
      Ew = (Eb + a*Eu)
-     print('match,mismatch,undecided',countmatch,countmismatch,countundecided)
-     print(countmatch+1)
-     print(countmatch+countmismatch+countundecided+3)
-     print('a',a)
-     print('Eb',Eb)
-     print("{:.30f}".format(Eb));
-     print('Eu', Eu)
-     print("{:.30f}".format(Eu));
-     print('Ew is',Ew)
-     print("{:.30f}".format(Ew));
-     #print("{:.30f}".format(Ew));
-     #getcontext().prec = 7
-     #c = Decimal(Ew/(1-Ew))
-     #print('decimal val',c)
+     
      rEw = log(Ew)/log((1-Ew))
      print('rEw',rEw)
      #rEw = log(c)
@@ -357,10 +408,11 @@ def submithipaa():
          wi = -(1 - exp(-abs(rEw)))
      else:
          wi = 0
+     wi = format(wi, '.2f')
      print('dirichlet model is', wi)
     
      status = 'pending'
-     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id,staffread_policies = staffread_policiesprint, doc_attest = doc_attestprint, doc_review = doc_reviewprint, staff_training = staff_trainingprint, doc_training = doc_trainingprint, desig_staff = desig_staffprint, assoc_receive = assoc_reviewprint, business = businessprint, audit = auditprint, written_report = written_reportprint, sys_in = sys_inprint, demonstrate = demonstrateprint, report = reportprint, anonymous = anonymousprint, match = countmatch, mismatch = countmismatch, undecided = countundecided, beta = Ei, dirichlet = 0.5, status = status)
+     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id, radiology_images = radiology_images, radiology_imaging_reports = radiology_imaging_reports, ekg = ekg, progress_notes = progress_notes, history_phy = history_phy, oper_report = oper_report, path_report = path_report, lab_report = lab_report, photographs = photographs, discharge_summaries = discharge_summaries,  health_care_billing= health_care_billing, consult = consult, medication = medication, emergency = emergency, dental  = dental, demographic = demographic,question = question, audiotape = audiotape, beta = Ei, dirichlet = wi, status = status)
      db.session.add(new_hipaa_request)
      db.session.commit()
 
@@ -374,6 +426,18 @@ def submithipaa():
          return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
      elif(current_user.username == 'externaluser'):
          return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
+
+
+@app.route('/identifierform', methods=['GET','POST'])
+def identifierform():
+    print('in trust form')
+    form = CreateTrustCalcForm()
+    if form.validate_on_submit():
+        print('Form validated')
+    else:
+        print(form.errors)
+    return render_template('identifier_form.html',form=form)
+
 
 @app.route('/submitrequest', methods=['GET','POST'])
 def submitrequest():
