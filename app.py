@@ -3,16 +3,16 @@ from flask_bootstrap import Bootstrap
 from math import log, exp, floor
 from decimal import *
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, RadioField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, RadioField, SelectField, HiddenField
 from wtforms.validators import InputRequired, Email, Length
 from flask import flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine import Engine
-from sqlalchemy import event
+from sqlalchemy import event, Sequence
 import os
 import psycopg2
-
+from datetime import datetime
 from wtforms_sqlalchemy.fields import QuerySelectField
 #from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -27,7 +27,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 #conn = psycopg2.connect("host=hbcdm.ce9qkwq3sggt.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
 #cur = conn.cursor()
-conn = psycopg2.connect("host=hbcdm.cdm9kks3s0wa.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
+conn = psycopg2.connect("host=hbcdm.cpnsaiphh4ed.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
 cur = conn.cursor()
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,6 +72,10 @@ class TrustChoice(UserMixin, db.Model):
     decision = db.Column(db.String(40))
     #trustchoices = db.relationship('TrustCalcForm', backref = 'trust_choice', lazy = 'dynamic')
 
+class IdentifierChoice(UserMixin, db.Model):
+    identifierchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    decision = db.Column(db.String(40))
+
 class TrustCalcForm(UserMixin, db.Model):
     trustid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     radiology_images = db.Column(db.String(10))
@@ -104,24 +108,19 @@ class TrustCalcForm(UserMixin, db.Model):
    # trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
 
 class IdentifierCalcForm(UserMixin, db.Model):
-    identifier = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    name = db.Column(db.String(10))
-    address = db.Column(db.String(10))
-    elements_of_dates = db.Column(db.String(10))
-    telephone_numbers = db.Column(db.String(10))
-    fax_numbers = db.Column(db.String(10))
-    email_address = db.Column(db.String(10))
-    ssn = db.Column(db.String(10))
-    medical_record_no = db.Column(db.String(10))
-    health_plan = db.Column(db.String(10))
-    account_no =  db.Column(db.String(10))
-    certificate_or_license = db.Column(db.String(10))
-    any_vehicle = db.Column(db.String(10))
-    web_url =db.Column(db.String(10))
-    ip_address = db.Column(db.String(10))
-    biometric_identifier = db.Column(db.String(10))
-    photographic_image = db.Column(db.String(10))
-    any_other_characteristics = db.Column(db.String(10))
+    identifier_id = db.Column(db.Integer, Sequence('IRB'), primary_key = True, autoincrement = True)
+    irb_description = db.Column(db.String(40))
+    person_id = db.Column(db.String(10))
+    gender = db.Column(db.String(10))
+    race = db.Column(db.String(10))
+    year_of_birth = db.Column(db.String(10))
+    month_of_birth = db.Column(db.String(10))
+    day_of_birth = db.Column(db.String(10))
+    time_of_birth = db.Column(db.String(10))
+    location = db.Column(db.String(10))
+    provider = db.Column(db.String(10))
+    care_site =  db.Column(db.String(10))
+    ethnicity = db.Column(db.String(10))
     ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
     
 
@@ -130,6 +129,8 @@ class IdentifierCalcForm(UserMixin, db.Model):
 
 #class ChoiceOpts(FlaskForm):
 #    opts = QuerySelectField(query_factory = choice_dataset, allow_blank =True)
+def choice_identifier():
+    return IdentifierChoice.query
 
 def choice_irb():
     return IrbInfo.query
@@ -180,6 +181,7 @@ class CreateRequestForm(FlaskForm):
 
 class CreateTrustCalcForm(FlaskForm):
     #CaStatus = QuerySelectField('Enter your choice', choices=[('Yes', 'Yes'), ('No', 'No'), ('Uncertain', 'Uncertain')])
+   
      irb_id = QuerySelectField(query_factory=choice_irb, allow_blank=True, get_label = 'irb_id')
      radiology_images = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
      radiology_imaging_reports = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
@@ -201,6 +203,23 @@ class CreateTrustCalcForm(FlaskForm):
      question = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
      audiotape = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
      #other = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+
+class CreateIdentifierForm(FlaskForm):
+    #person_id = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    #identifier_id = HiddenField("Field1")
+    irb_description = StringField('Description', validators=[InputRequired(), Length(min=4, max=40)])
+    person_id = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    gender = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    race = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    year_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    month_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    day_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    time_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    location = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    provider = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    care_site = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    ethnicity = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -431,13 +450,73 @@ def submithipaa():
 @app.route('/identifierform', methods=['GET','POST'])
 def identifierform():
     print('in trust form')
-    form = CreateTrustCalcForm()
+    form = CreateIdentifierForm()
     if form.validate_on_submit():
         print('Form validated')
+    
     else:
         print(form.errors)
     return render_template('identifier_form.html',form=form)
 
+@app.route('/submitidentifierform', methods=['GET','POST'])
+def submitidentifierform():
+    formsubmit = IdentifierCalcForm()
+    form = CreateIdentifierForm()
+    person_id = form.person_id.data.decision
+    irb_description = form.irb_description.data
+    gender = form.gender.data.decision
+    race = form.race.data.decision
+    year_of_birth = form.year_of_birth.data.decision
+    month_of_birth = form.month_of_birth.data.decision
+    day_of_birth = form.day_of_birth.data.decision
+    time_of_birth = form.time_of_birth.data.decision
+    location = form.location.data.decision
+    provider = form.provider.data.decision
+    care_site = form.care_site.data.decision
+    ethnicity = form.ethnicity.data.decision
+    new_irb_request = IdentifierCalcForm(ownerid =  current_user.id,person_id = person_id, irb_description = irb_description, gender = gender, race =race, year_of_birth = year_of_birth, month_of_birth = month_of_birth, day_of_birth = day_of_birth, time_of_birth = time_of_birth, location = location, provider = provider, care_site= care_site, ethnicity = ethnicity)
+
+    db.session.add(new_irb_request)
+    db.session.flush()
+    t = datetime.time(datetime.now())
+    print('current time is',t)
+    now = datetime.now()
+    date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+    date_time = date_time.replace(",","")
+    date_time = date_time.replace("/","")
+    date_time = date_time.replace(":", "")
+    date_time = date_time.replace(" ","")
+    print("date and time:",date_time)
+    print('Identifier id is',new_irb_request.identifier_id)
+    templist = [person_id, gender, race, year_of_birth, month_of_birth, day_of_birth, time_of_birth, location, provider, care_site, ethnicity]
+    if (person_id == 'Yes'):
+        risk = "high"
+    elif (person_id == 'No') and (gender == 'Yes') and (race == 'Yes'):
+        risk = "high"
+    elif (person_id == 'No') and (gender == 'No') and (race == 'No') and (year_of_birth == 'Yes') and (month_of_birth == 'Yes') and (day_of_birth == 'Yes'):
+        risk = "high"
+    elif (person_id == 'No') and (gender == 'No') and (race == 'No') and (year_of_birth == 'No'):
+        risk = "medium"
+    elif (person_id == 'No') and (gender == 'No') and (race == 'No') and (year_of_birth == 'Yes') and  (month_of_birth == 'No'):
+        risk = "medium"
+    elif (person_id == 'No') and (gender == 'No') and (race == 'No') and (year_of_birth == 'Yes') and  (month_of_birth == 'Yes') and (day_of_birth == 'No'):
+        risk = "medium"
+    else:
+        risk = "low"
+    
+    print('the risk is',risk)
+    templist = [1 if i== "Yes" else 0 for i in templist]
+    print('The new templist is', templist)
+    
+    postgres_insert_query = "INSERT INTO ui_irb_identifier(irb_id, irb_description, user_id, risk, id01, id02, id03, id04, id05, id06, id07, id08, id09, id10,id11) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    record_to_insert = (date_time, irb_description,current_user.id, risk, templist[0], templist[1], templist[2], templist[3], templist[4], templist[5], templist[6], templist[7], templist[8], templist[9], templist[10] )
+    cur.execute(postgres_insert_query, record_to_insert)
+    conn.commit()
+
+    #print(formsubmit.identifier_id)
+    
+
+    return render_template('dashboard.html')
 
 @app.route('/submitrequest', methods=['GET','POST'])
 def submitrequest():
