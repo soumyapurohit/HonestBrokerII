@@ -31,7 +31,7 @@ conn = psycopg2.connect("host=hbcdm.cpnsaiphh4ed.us-east-1.rds.amazonaws.com dbn
 cur = conn.cursor()
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(15), unique=True)
+    username = db.Column(db.String(50), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
     requests = db.relationship('RequestForm', backref = 'user', lazy = 'dynamic')
@@ -67,6 +67,7 @@ class ItemInfo(UserMixin, db.Model):
     itemname = db.Column(db.String(40))
     itemunique = db.Column(db.String(10))
 
+# Minh's note: Yes, No, and Uncertain.
 class TrustChoice(UserMixin, db.Model):
     trustchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     decision = db.Column(db.String(40))
@@ -75,7 +76,9 @@ class TrustChoice(UserMixin, db.Model):
 class IdentifierChoice(UserMixin, db.Model):
     identifierchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     decision = db.Column(db.String(40))
-
+	
+# Minh's note: Old trust calculation form - commented.
+'''
 class TrustCalcForm(UserMixin, db.Model):
     trustid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     radiology_images = db.Column(db.String(10))
@@ -98,6 +101,65 @@ class TrustCalcForm(UserMixin, db.Model):
     question = db.Column(db.String(10))
     audiotape = db.Column(db.String(10))
     #other = db.Column(db.String(10))
+    match = db.Column(db.String(10))
+    mismatch = db.Column(db.String(10))
+    undecided = db.Column(db.String(10))
+    beta = db.Column(db.String(10))
+    dirichlet = db.Column(db.String(10))
+    status = db.Column(db.String(10))
+    ownerid= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
+   # trustchoiceid = db.Column(db.Integer, db.ForeignKey('trust_choice.trustchoiceid'), nullable=False)
+'''
+   
+# Minh's note: New trust calculation form.
+class TrustCalcForm(UserMixin, db.Model):
+    trustid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+	
+    # Identifier cartegories.
+    personal_id = db.Column(db.String(10))
+    gender = db.Column(db.String(10))
+    race = db.Column(db.String(10))
+    birth_year = db.Column(db.String(10))
+    birth_month = db.Column(db.String(10))
+    birth_day = db.Column(db.String(10))
+    birth_time = db.Column(db.String(10))
+    location = db.Column(db.String(10))
+    provider = db.Column(db.String(10))
+    care_site = db.Column(db.String(10))
+    ethnicity = db.Column(db.String(10))
+	
+    # Domain cartegories.
+    condition = db.Column(db.String(10))
+    device_condition = db.Column(db.String(10))
+    drug_condition = db.Column(db.String(10))
+    measurement_condition = db.Column(db.String(10))
+    observation_condition = db.Column(db.String(10))
+    procedure_condition = db.Column(db.String(10))
+	
+    device = db.Column(db.String(10))
+    drug_device = db.Column(db.String(10))
+    observation_device = db.Column(db.String(10))
+    procedure_device = db.Column(db.String(10))
+	
+    drug = db.Column(db.String(10))
+    measurement_drug = db.Column(db.String(10))
+    observation_drug = db.Column(db.String(10))
+    procedure_drug = db.Column(db.String(10))
+	
+    measurement = db.Column(db.String(10))
+    observation_measurement = db.Column(db.String(10))
+    procedure_measurement = db.Column(db.String(10))
+	
+    observation = db.Column(db.String(10))
+    procedure_observation = db.Column(db.String(10))
+	
+    procedure = db.Column(db.String(10))
+	
+    visit = db.Column(db.String(10))
+	
+    specimen = db.Column(db.String(10))
+	
+    # Trust calc.
     match = db.Column(db.String(10))
     mismatch = db.Column(db.String(10))
     undecided = db.Column(db.String(10))
@@ -158,13 +220,13 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class LoginForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=50)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=6, max=80)])
     remember = BooleanField('remember me')
 
 class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length( max=45)])
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=50)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=6, max=80)])
 
 class CreateRequestForm(FlaskForm):
@@ -179,6 +241,8 @@ class CreateRequestForm(FlaskForm):
     #dstype = QuerySelectField(query_factory=choice_typeofdata, allow_blank=True)
     typeofdata=StringField('What type of data would you like to receive', validators=[InputRequired(), Length(min=4, max=40)])
 
+# Minh's note: Old class.
+'''
 class CreateTrustCalcForm(FlaskForm):
     #CaStatus = QuerySelectField('Enter your choice', choices=[('Yes', 'Yes'), ('No', 'No'), ('Uncertain', 'Uncertain')])
    
@@ -203,6 +267,56 @@ class CreateTrustCalcForm(FlaskForm):
      question = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
      audiotape = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
      #other = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+'''
+
+# Minh's note: new class.
+class CreateTrustCalcForm(FlaskForm):
+     #CaStatus = QuerySelectField('Enter your choice', choices=[('Yes', 'Yes'), ('No', 'No'), ('Uncertain', 'Uncertain')])
+     irb_id = QuerySelectField(query_factory=choice_irb, allow_blank=True, get_label = 'irb_id')
+	 
+     # Identifier cartegories.
+     personal_id = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     gender = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     race = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     birth_year = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     birth_month = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     birth_day = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     birth_time = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     location = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     provider = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     care_site  = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     ethnicity = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     # Domain cartegories.
+     condition = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     device_condition = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     drug_condition = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     measurement_condition = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     observation_condition = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     procedure_condition = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     device = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     drug_device = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     observation_device = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     procedure_device = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     drug = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     measurement_drug = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     observation_drug = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     procedure_drug = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     measurement = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     observation_measurement = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     procedure_measurement = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     observation = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+     procedure_observation = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     procedure = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     visit = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
+	 
+     specimen = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
 
 class CreateIdentifierForm(FlaskForm):
     #person_id = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
@@ -219,6 +333,29 @@ class CreateIdentifierForm(FlaskForm):
     provider = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
     care_site = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
     ethnicity = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    #irb_id = QuerySelectField(query_factory=choice_irb, allow_blank=True, get_label = 'irb_id')
+    condition = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    condition_device = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    condition_drug = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    condition_measurement = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    condition_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    condition_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    device  = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    device_drug = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    device_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    device_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    drug = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    drug_measurement = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    drug_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    drug_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    measurement = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    measurement_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    measurement_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    observation_procedure=QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    visit = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    specimen = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
 
 @app.route('/')
 def index():
@@ -246,6 +383,7 @@ def signup():
         flash("Registration successful!", "success")
         new_user = User(username=form.username.data, email=form.email.data, password=form.password.data)
         db.session.add(new_user)
+        db.session.commit()
 
         return '<h1> New user has been registered</h1>'
 
@@ -339,6 +477,8 @@ def pendrequest():
         print(form.errors)
     return render_template('example2.html',form=form)
 
+# Minh's note: old function.
+'''
 @app.route('/submithipaaform', methods=['GET','POST'])
 def submithipaa():
      print(current_user.username)
@@ -445,7 +585,139 @@ def submithipaa():
          return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
      elif(current_user.username == 'externaluser'):
          return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
+'''
 
+# Minh's note: new function.
+@app.route('/submithipaaform', methods=['GET','POST'])
+def submithipaa():
+     print(current_user.username)
+     form = CreateTrustCalcForm() 
+     irb_id = form.irb_id.data.irb_id
+
+     # Identifier 
+     personal_id = form.personal_id.data.decision
+     gender = form.gender.data.decision
+     race = form.race.data.decision
+     birth_year = form.birth_year.data.decision
+     birth_month = form.birth_month.data.decision
+     birth_day = form.birth_day.data.decision
+     birth_time = form.birth_time.data.decision
+     location = form.location.data.decision
+     provider = form.provider.data.decision
+     care_site = form.care_site.data.decision
+     ethnicity = form.ethnicity.data.decision
+	 
+     # Domain
+     condition = form.condition.data.decision
+     device_condition = form.device_condition.data.decision
+     drug_condition = form.drug_condition.data.decision
+     measurement_condition = form.measurement_condition.data.decision
+     observation_condition = form.observation_condition.data.decision
+     procedure_condition = form.procedure_condition.data.decision
+	 
+     device = form.device.data.decision
+     drug_device = form.drug_device.data.decision
+     observation_device = form.observation_device.data.decision
+     procedure_device = form.procedure_device.data.decision
+	 
+     drug = form.drug.data.decision
+     measurement_drug = form.measurement_drug.data.decision
+     observation_drug = form.observation_drug.data.decision
+     procedure_drug = form.procedure_drug.data.decision
+	 
+     measurement = form.measurement.data.decision
+     observation_measurement = form.observation_measurement.data.decision
+     procedure_measurement = form.procedure_measurement.data.decision
+	 
+     observation = form.observation.data.decision
+     procedure_observation = form.procedure_observation.data.decision
+	 
+     procedure = form.procedure.data.decision
+	 
+     visit = form.visit.data.decision
+	 
+     specimen = form.specimen.data.decision
+     
+     templist = [personal_id, gender, race, birth_year, birth_month, birth_day, birth_time, location, provider, care_site, ethnicity, 
+				condition, device_condition, drug_condition, measurement_condition, observation_condition, procedure_condition, 
+				device, drug_device, observation_device, procedure_device, drug, measurement_drug, observation_drug, procedure_drug, 
+				measurement, observation_measurement, procedure_measurement, observation, procedure_observation,
+				procedure, visit, specimen]
+     if (current_user.username == 'internaluser'):
+         userrole = 'internal_user'
+     elif (current_user.username == 'externaluser'):
+         userrole = 'external_user'
+
+     postgreSQL_select_Query = "select * from data_policy_domain  where data_policy_domain.irb_number = %s"
+     cur.execute(postgreSQL_select_Query, [irb_id])
+     resultset = cur.fetchone()
+     print('resultset is',resultset)
+     d = resultset[1:]
+            
+     countmismatch = 0
+     countundecided = 0
+     countmatch = 0
+     for a,b in zip(templist, d):
+         if (a == 'Yes' and (b == '1' or b  == None)):
+             countmatch += 1
+         elif (a == 'No' and b == '1'):
+             countmismatch += 1
+         elif (a == 'No' and b == None):
+             countmatch += 1
+         elif (a == 'Uncertain' and b == '1'):
+             countundecided += 1
+         elif (a == 'Uncertain' and b == None):
+             countmatch += 1
+     N = 33
+     # beta model trust calculation
+     alpha_c = floor(countmatch + ((countundecided*countmatch)/(countmatch+countmismatch)));
+     beta_c = N - alpha_c;
+     Ei = float(alpha_c + 1)/float(alpha_c + beta_c + 2);
+     Ei = format(Ei, '.2f')
+     print('Beta model is',Ei)
+    
+     
+     # Formula 7 of trust model
+     a = 0.7
+     Eb = float(countmatch+1.0) / float(countmatch+countmismatch+countundecided+3.0)
+     Eu = float(countundecided+1.0) / float(countmatch+countmismatch+countundecided+3.0)
+     Ew = (Eb + a*Eu)
+     
+     rEw = log(Ew)/log((1-Ew))
+     print('rEw',rEw)
+     #rEw = log(c)
+     if rEw > 0:
+         wi = 1 - exp(-abs(rEw))
+     elif rEw < 0:
+         wi = -(1 - exp(-abs(rEw)))
+     else:
+         wi = 0
+     wi = format(wi, '.2f')
+     print('dirichlet model is', wi)
+    
+     status = 'pending'
+     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id, personal_id = personal_id, gender = gender, race = race, 
+                                                  birth_year = birth_year, birth_month = birth_month, birth_day = birth_day, birth_time = birth_time, 
+                                                  location = location, provider = provider, care_site = care_site, ethnicity = ethnicity, 
+                                                  condition = condition, device_condition = device_condition, drug_condition = drug_condition, 
+                                                  measurement_condition = measurement_condition, observation_condition = observation_condition, procedure_condition = procedure_condition, 
+                                                  device = device, drug_device = drug_device, observation_device = observation_device, procedure_device = procedure_device, 
+                                                  drug = drug, measurement_drug = measurement_drug, observation_drug = observation_drug, 
+                                                  procedure_drug = procedure_drug, procedure = procedure, visit = visit, specimen = specimen, 
+                                                  beta = Ei, dirichlet = wi, status = status)
+     db.session.add(new_hipaa_request)
+     db.session.commit()
+
+     request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
+     for i in request_info:
+         print("the trust id is", i.trustid)
+     apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'approved').all()
+     deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status= 'denied').all()
+
+     if(current_user.username == 'internaluser'):
+         return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
+     elif(current_user.username == 'externaluser'):
+         return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
 
 @app.route('/identifierform', methods=['GET','POST'])
 def identifierform():
@@ -474,6 +746,31 @@ def submitidentifierform():
     provider = form.provider.data.decision
     care_site = form.care_site.data.decision
     ethnicity = form.ethnicity.data.decision
+    #irb_id = form.irb_id.data.irb_id
+    '''
+    condition = form.condition.data.decision
+    condition_device = form.condition_device.data.decision
+    condition_drug = form.condition_drug.data.decision
+    condition_measurement = form.condition_measurement.data.decision
+    condition_observation = form.condition_observation.data.decision
+    condition_procedure = form.condition_procedure.data.decision
+    device = form.device.data.decision
+    device_drug = form.device_drug.data.decision
+    device_observation = form.device_observation
+    device_procedure = form.device_procedure.data.decision
+    drug = form.drug.data.decision
+    drug_measurement = form.drug_measurement.data.decision
+    drug_observation = form.drug_observation.data.decision
+    drug_procedure = form.drug_procedure.data.decision
+    measurement = form.measurement.data.decision
+    measurement_procedure = form.measurement_procedure.data.decision
+    measurement_observation = form.measurement_observation.data.decision
+    observation = form.observation.data.decision
+    observation_procedure = form.observation_procedure.data.decision
+    procedure = form.procedure.data.decision
+    visit = form.visit.data.decision
+    specimen = form.specimen.data.decision
+'''
     new_irb_request = IdentifierCalcForm(ownerid =  current_user.id,person_id = person_id, irb_description = irb_description, gender = gender, race =race, year_of_birth = year_of_birth, month_of_birth = month_of_birth, day_of_birth = day_of_birth, time_of_birth = time_of_birth, location = location, provider = provider, care_site= care_site, ethnicity = ethnicity)
 
     db.session.add(new_irb_request)
@@ -481,7 +778,7 @@ def submitidentifierform():
     t = datetime.time(datetime.now())
     print('current time is',t)
     now = datetime.now()
-    date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+    date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
     date_time = date_time.replace(",","")
     date_time = date_time.replace("/","")
     date_time = date_time.replace(":", "")
@@ -489,6 +786,9 @@ def submitidentifierform():
     print("date and time:",date_time)
     print('Identifier id is',new_irb_request.identifier_id)
     templist = [person_id, gender, race, year_of_birth, month_of_birth, day_of_birth, time_of_birth, location, provider, care_site, ethnicity]
+    '''
+    domainlist = [condition, condition_device, condition_drug, condition_measurement, condition_observation, condition_procedure, device, device_drug, device_observation, device_procedure, drug, drug_measurement, drug_observation, drug_procedure, measurement, measurement_procedure, measurement_observation, observation, observation_procedure, procedure, visit, specimen]
+'''
     if (person_id == 'Yes'):
         risk = "high"
     elif (person_id == 'No') and (gender == 'Yes') and (race == 'Yes'):
@@ -507,16 +807,42 @@ def submitidentifierform():
     print('the risk is',risk)
     templist = [1 if i== "Yes" else 0 for i in templist]
     print('The new templist is', templist)
-    
+    #domainlist = [1 if i== "Yes" else 0 for i in domainlist]  
+    #print('The new domainlist is', domainlist) 
     postgres_insert_query = "INSERT INTO ui_irb_identifier(irb_id, irb_description, user_id, risk, id01, id02, id03, id04, id05, id06, id07, id08, id09, id10,id11) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     record_to_insert = (date_time, irb_description,current_user.id, risk, templist[0], templist[1], templist[2], templist[3], templist[4], templist[5], templist[6], templist[7], templist[8], templist[9], templist[10] )
     cur.execute(postgres_insert_query, record_to_insert)
+    '''
+    postgres_insert_query = "INSERT INTO ui_irb_domain(irb_id, dm01, dm02, dm03, dm04, dm05, dm06, dm07, dm08, dm09, dm10, dm11, dm12, dm13, dm14, dm15, dm16, dm17, dm18, dm19, dm20, dm21, dm22) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    record_to_insert = (date_time, domainlist[0], domainlist[1] , domainlist[2], domainlist[3], domainlist[4], domainlist[5], domainlist[6], domainlist[7], domainlist[8], domainlist[9], domainlist[10], domainlist[11], domainlist[12], domainlist[13], domainlist[14], domainlist[15] , domainlist[16], domainlist[17], domainlist[18], domainlist[19], domainlist[20], domainlist[21])
+    cur.execute(postgres_insert_query, record_to_insert)
+    '''
     conn.commit()
-
-    #print(formsubmit.identifier_id)
+    postgreSQL_select_Query = "select * from ui_irb_identifier"
+    cur.execute(postgreSQL_select_Query)
+    resultset = cur.fetchall()
+    for i in resultset:
+        print('result fron identifier table is', i[0],i[1])
+    print('resultset is',resultset)
     
+    #print(formsubmit.identifier_id)
+    if(current_user.username == 'Internal affiliated professor'):
+        risk_user = "low"
+    elif (current_user.username == 'Internal affiliated research assistant'):
+        risk_user = "medium"
+    elif (current_user.username == 'Internal affiliated student'):
+        risk_user = "medium"
+    elif (current_user.username == 'Internal non affiliated professor'):
+        risk_user = "low"
+    elif (current_user.username == 'Internal non affiliated research assistant'):
+        risk_user = "medium"
+    elif (current_user.username == 'Internal non affiliated student'):
+        risk_user = "medium"
+    elif (current_user.username == 'external'):
+        risk_user = "high"
 
-    return render_template('dashboard.html')
+
+    return render_template('dashboard.html', resultset = resultset, name = current_user.username)
 
 @app.route('/submitrequest', methods=['GET','POST'])
 def submitrequest():

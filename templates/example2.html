@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
-HIPAA Form Entry
+Data Request Submission
 {% endblock %}
 
 {% block styles %}
@@ -14,30 +14,53 @@ HIPAA Form Entry
 <div class="container">
 
   <form class="form-signin" method = "POST" action="/submithipaaform">
-    <h2 class="form-signin-heading">Domain Form Entry</h2>
+    <h2 class="form-signin-heading">Data Request Submission</h2>
     {{form.hidden_tag() }}
     
 <tr>
     <td>{{ wtf.form_field(form.irb_id) }}</td>
-    <td>{{ wtf.form_field(form.radiology_images) }}</td>
-    <td>{{ wtf.form_field(form.radiology_imaging_reports) }}</td>
-    <td>{{ wtf.form_field(form.ekg) }}</td>
-    <td>{{ wtf.form_field(form.progress_notes) }}</td>
-    <td>{{ wtf.form_field(form.history_phy) }}</td>
-    <td>{{ wtf.form_field(form.oper_report) }}</td>
-    <td>{{ wtf.form_field(form.path_report) }}</td>
-    <td>{{ wtf.form_field(form.lab_report)}}</td>
-    <td>{{ wtf.form_field(form.photographs)}}</td>
-    <td>{{ wtf.form_field(form.discharge_summaries)}}</td>
-    <td>{{ wtf.form_field(form.health_care_billing)}}</td>
-    <td>{{ wtf.form_field(form.consult)}}</td>
-    <td>{{ wtf.form_field(form.medication)}}</td>
-    <td>{{ wtf.form_field(form.emergency)}}</td>
-    <td>{{ wtf.form_field(form.dental)}}</td>
-    <td>{{ wtf.form_field(form.demographic)}}</td>
-    <td>{{ wtf.form_field(form.question)}}</td>
-    <td>{{ wtf.form_field(form.audiotape)}}</td>
+    <td>{{ wtf.form_field(form.personal_id) }}</td>
+    <td>{{ wtf.form_field(form.gender) }}</td>
+    <td>{{ wtf.form_field(form.race) }}</td>
+    <td>{{ wtf.form_field(form.birth_year) }}</td>
+    <td>{{ wtf.form_field(form.birth_month) }}</td>
+    <td>{{ wtf.form_field(form.birth_day) }}</td>
+    <td>{{ wtf.form_field(form.birth_time) }}</td>
+    <td>{{ wtf.form_field(form.location)}}</td>
+    <td>{{ wtf.form_field(form.provider)}}</td>
+    <td>{{ wtf.form_field(form.care_site)}}</td>
+    <td>{{ wtf.form_field(form.ethnicity)}}</td>
+
+    <td>{{ wtf.form_field(form.condition)}}</td>
+    <td>{{ wtf.form_field(form.device_condition)}}</td>
+    <td>{{ wtf.form_field(form.drug_condition)}}</td>
+    <td>{{ wtf.form_field(form.measurement_condition)}}</td>
+    <td>{{ wtf.form_field(form.observation_condition)}}</td>
+    <td>{{ wtf.form_field(form.procedure_condition)}}</td>
+
+    <td>{{ wtf.form_field(form.device)}}</td>
+    <td>{{ wtf.form_field(form.drug_device)}}</td>
+    <td>{{ wtf.form_field(form.drug_condition)}}</td>
+    <td>{{ wtf.form_field(form.observation_device)}}</td>
+    <td>{{ wtf.form_field(form.procedure_device)}}</td>
+
+    <td>{{ wtf.form_field(form.drug)}}</td>
+    <td>{{ wtf.form_field(form.measurement_drug)}}</td>
+    <td>{{ wtf.form_field(form.observation_drug)}}</td>
+    <td>{{ wtf.form_field(form.procedure_drug)}}</td>
+
+    <td>{{ wtf.form_field(form.measurement)}}</td>
+    <td>{{ wtf.form_field(form.observation_measurement)}}</td>
+    <td>{{ wtf.form_field(form.procedure_measurement)}}</td>
+
+    <td>{{ wtf.form_field(form.observation)}}</td>
+    <td>{{ wtf.form_field(form.procedure_observation)}}</td>
+
+    <td>{{ wtf.form_field(form.procedure)}}</td>
     
+    <td>{{ wtf.form_field(form.visit)}}</td>
+ 
+    <td>{{ wtf.form_field(form.specimen)}}</td>
    
 </tr>
 

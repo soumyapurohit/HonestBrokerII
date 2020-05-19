@@ -1,0 +1,53 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Domain Form Entry
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form method = "POST" action="/submitdomainform">
+    <h2 style= "text-align: center;" >Domain Form Entry</h2>
+    {{form.hidden_tag() }}
+    <h4 style= "text-align: center;"> Please fill the form as Yes or No for the required fields</h4>
+<tr>
+   
+    <td>{{ wtf.form_field(form.condition)}} </td>
+    <td>{{ wtf.form_field(form.condition_device)}}</td>
+    <td>{{ wtf.form_field(form.condition_drug)}}</td>
+    <td>{{ wtf.form_field(form.condition_measurement)}}</td>
+    <td>{{ wtf.form_field(form.condition_observation)}}</td>
+    <td>{{ wtf.form_field(form.condition_procedure)}}</td>
+    <td>{{ wtf.form_field(form.device)}}</td>
+    <td>{{ wtf.form_field(form.device_drug)}}</td>
+    <td>{{ wtf.form_field(form.device_observation)}}</td>
+    <td>{{ wtf.form_field(form.device_procedure)}}</td>
+    <td>{{ wtf.form_field(form.drug)}}</td>
+    <td>{{ wtf.form_field(form.drug_measurement)}}</td>
+    <td>{{ wtf.form_field(form.drug_observation)}}</td>
+    <td>{{ wtf.form_field(form.drug_procedure)}}</td>
+    <td>{{ wtf.form_field(form.measurement)}}</td>
+    <td>{{ wtf.form_field(form.measurement_procedure)}}</td>
+    <td>{{ wtf.form_field(form.measurement_observation)}}</td>
+    <td>{{ wtf.form_field(form.observation)}}</td>
+    <td>{{ wtf.form_field(form.observation_procedure)}}</td>
+    <td>{{ wtf.form_field(form.procedure)}}</td>
+    <td>{{ wtf.form_field(form.visit)}}</td>
+    <td>{{ wtf.form_field(form.specimen)}}</td>
+    
+   
+</tr>
+<body background="{{ url_for('static', filename='images-background1.jpeg') }}">
+    
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+  </form>
+  <body background="{{ url_for('static', filename='images-background1.jpeg') }}" background-repeat:no-repeat;>
+</div> <!-- /container -->
+{% endblock %}

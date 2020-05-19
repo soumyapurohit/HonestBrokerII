@@ -96,17 +96,47 @@ Dashboard
 	</div>   -->
        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                <h1 class="page-header">Welcome , {{name}}</h1>
-		<form action =" {{url_for('request') }} " method ="get">
-			<input type = "submit"class = "btn btn-info" value="New Request">
-		</form>
+	       <h4>Please fill out IRB request form to submit the data needs for your project and the Data request form to submit a request for a particular dataset. </h4>
+	       <table>
+		       <tr>
+			       
+	       <form action =" {{url_for('identifierform') }} " method ="get">
+		       <td> <input type = "submit" style="margin:5px;" class = "btn btn-info" value="IRB Request Submission"></td>
+                </form>
 		<form action =" {{url_for('hipaaform') }} " method ="get">
-                        <input type = "submit"class = "btn btn-info" value="Domain Form Entry">
+			<td><input type = "submit" style="margin:5px;" class = "btn btn-info" value="Data Request Submission"></td>
+
                 </form>
-		<form action =" {{url_for('identifierform') }} " method ="get">
-                        <input type = "submit"class = "btn btn-info" value="Identifier Form Entry">
-                </form>
+		       </tr>
+	       </table>
+
+	       
 	 	<div w3-include-html="/home/ubuntu/HonestChain/templates/bot/index_bot.html"></div>
-          <h2 class="sub-header">Pending Request</h2>
+	        <h2 class="sub-header">IRB Data Request</h2>
+          	<div class="table-responsive">
+            	<table class="table table-striped">
+              	<thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Request Description</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                        {% for result in result %}
+                        <td>{{result[0]}}</td>
+                        <td id = "requestname">{{result[1]}}</td>
+                       
+
+                </tr>
+                {% endfor %}
+		<body background="{{ url_for('static', filename='images-background1.jpeg') }}" background-repeat:no-repeat;>
+              </tbody>
+            </table>
+              <tr>
+	 <!---		      
+          <h2 class="sub-header">Pending Data Request</h2>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
@@ -127,7 +157,7 @@ Dashboard
 		{% endfor %}
               </tbody>
             </table>
-            <h2 class="sub-header">Approved Request</h2>
+            <h2 class="sub-header">Approved Data Request</h2>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -170,6 +200,7 @@ Dashboard
 			    {% endfor %}
                     </tbody>
                 </table>
+	 -->
             </div>
       </div>
     </div>

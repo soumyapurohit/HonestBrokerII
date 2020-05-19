@@ -1,0 +1,44 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+IRB Request Form Entry
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}">
+		       
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form  method = "POST" action="/submitidentifierform">
+        <h2 style= "text-align: center;">Identifier Form Entry</h2>
+	    {{form.hidden_tag() }}
+
+	    <h4 style="text-align: center;">Please fill the form as Yes or No for the required fields</h4>
+
+<tr>
+   
+    <td>{{ wtf.form_field(form.irb_description) }}</td>
+    <td>{{ wtf.form_field(form.person_id) }}</td>
+    <td>{{ wtf.form_field(form.gender) }}</td>
+    <td>{{ wtf.form_field(form.race_of_the_person) }}</td>
+    <td>{{ wtf.form_field(form.year_of_birth) }}</td>
+    <td>{{ wtf.form_field(form.month_of_birth) }}</td>
+    <td>{{ wtf.form_field(form.day_of_birth) }}</td>
+    <td>{{ wtf.form_field(form.time_of_birth) }}</td>
+    <td>{{ wtf.form_field(form.location) }}</td>
+    <td>{{ wtf.form_field(form.provider)}}</td>
+    <td>{{ wtf.form_field(form.care_site)}}</td>
+    <td>{{ wtf.form_field(form.ethnicity)}}</td>
+</tr>
+  
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
+  </form>
+  <body background="{{ url_for('static', filename='images-background1.jpeg') }}" background-repeat:no-repeat;>
+</div> <!-- /container -->
+{% endblock %}
