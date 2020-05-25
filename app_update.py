@@ -322,40 +322,40 @@ class CreateIdentifierForm(FlaskForm):
     #person_id = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
     #identifier_id = HiddenField("Field1")
     irb_description = StringField('Description', validators=[InputRequired(), Length(min=4, max=40)])
-    person_id = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    gender = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    race_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    year_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    month_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    day_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    time_of_birth = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    location = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    provider = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    care_site = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    ethnicity = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_person_id = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_gender_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_race_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_year_of_birth_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_month_of_birth_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_day_of_birth_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_time_of_birth_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_place_of_residency = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_primary_care_provider = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_site_of_primary_care = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_ethnicity_of_the_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
     #irb_id = QuerySelectField(query_factory=choice_irb, allow_blank=True, get_label = 'irb_id')
-    condition = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    condition_device = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    condition_drug = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    condition_measurement = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    condition_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    condition_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    device  = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    device_drug = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    device_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    device_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    drug = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    drug_measurement = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    drug_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    drug_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    measurement = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    measurement_procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    measurement_observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    observation = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    observation_procedure=QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    procedure = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    visit = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
-    specimen = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_records_suggesting_presence_of_a_disease = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_conditions_and_devices = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_conditions_and_drugs = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_conditions_and_measures = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_conditons_and_related_spans_of_time = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_conditions_and_procedures = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_person_exposure_to_devices = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_devices_and_drugs = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_devices_and_related_spans_of_time = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_devices_and_procedures = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_utilization_of_drugs = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_drugs_usage_and_related_measures  = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_drugs_usage_and_related_spans_of_time = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_drugs_and_procedures = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_values_of_testing = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_measurements_and_related_procedures = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_measurements_and_related_spans_of_time = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_spans_of_time_where_person_is_at_risk = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_spans_of_time_related_to_procedures=QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_activities_carried_out_on_patients = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_visits_of_a_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    do_you_need_details_about_biological_samples_of_a_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
 
 @app.route('/')
 def index():
@@ -732,22 +732,35 @@ def identifierform():
         print(form.errors)
     return render_template('identifier_form.html',form=form)
 
+
+
 @app.route('/submitidentifierform', methods=['GET','POST'])
 def submitidentifierform():                                  
     formsubmit = IdentifierCalcForm()
     form = CreateIdentifierForm()
-    person_id = form.person_id.data.decision
+    #person_id = form.person_id.data.decision
     irb_description = form.irb_description.data
-    gender = form.gender.data.decision
-    race_of_the_person = form.race_of_the_person.data.decision
-    year_of_birth = form.year_of_birth.data.decision
-    month_of_birth = form.month_of_birth.data.decision
-    day_of_birth = form.day_of_birth.data.decision
-    time_of_birth = form.time_of_birth.data.decision
-    location = form.location.data.decision
-    provider = form.provider.data.decision
-    care_site = form.care_site.data.decision
-    ethnicity = form.ethnicity.data.decision
+    #gender = form.gender.data.decision
+    #race_of_the_person = form.race_of_the_person.data.decision
+    #year_of_birth = form.year_of_birth.data.decision
+    #month_of_birth = form.month_of_birth.data.decision
+    #day_of_birth = form.day_of_birth.data.decision
+    #time_of_birth = form.time_of_birth.data.decision
+    #location = form.location.data.decision
+    #provider = form.provider.data.decision
+    #care_site = form.care_site.data.decision
+    #ethnicity = form.ethnicity.data.decision
+    do_you_need_details_about_person_id = form.do_you_need_details_about_person_id.data.decision
+    do_you_need_details_about_gender_of_the_person = form.do_you_need_details_about_gender_of_the_person.data.decision
+    do_you_need_details_about_race_of_the_person = form.do_you_need_details_about_race_of_the_person.data.decision
+    do_you_need_details_about_year_of_birth_of_the_person = form.do_you_need_details_about_year_of_birth_of_the_person.data.decision
+    do_you_need_details_about_month_of_birth_of_the_person = form.do_you_need_details_about_month_of_birth_of_the_person.data.decision
+    do_you_need_details_about_day_of_birth_of_the_person = form.do_you_need_details_about_day_of_birth_of_the_person.data.decision
+    do_you_need_details_about_time_of_birth_of_the_person = form.do_you_need_details_about_time_of_birth_of_the_person.data.decision
+    do_you_need_details_about_place_of_residency = form.do_you_need_details_about_place_of_residency.data.decision
+    do_you_need_details_about_primary_care_provider = form.do_you_need_details_about_primary_care_provider.data.decision
+    do_you_need_details_about_site_of_primary_care = form.do_you_need_details_about_site_of_primary_care.data.decision
+    do_you_need_details_about_ethnicity_of_the_person = form.do_you_need_details_about_ethnicity_of_the_person.data.decision
 
 
     #irb_id = form.irb_id.data.irb_id
@@ -774,7 +787,7 @@ def submitidentifierform():
     #visit = form.visit.data.decision
     #specimen = form.specimen.data.decision
     
-    new_irb_request = IdentifierCalcForm(ownerid =  current_user.id,person_id = person_id, irb_description = irb_description, gender = gender, race_of_the_person =race_of_the_person, year_of_birth = year_of_birth, month_of_birth = month_of_birth, day_of_birth = day_of_birth, time_of_birth = time_of_birth, location = location, provider = provider, care_site= care_site, ethnicity = ethnicity)
+    new_irb_request = IdentifierCalcForm(ownerid =  current_user.id,person_id = do_you_need_details_about_person_id, irb_description = irb_description , gender = do_you_need_details_about_gender_of_the_person , race_of_the_person = do_you_need_details_about_race_of_the_person, year_of_birth = do_you_need_details_about_year_of_birth_of_the_person, month_of_birth = do_you_need_details_about_month_of_birth_of_the_person, day_of_birth = do_you_need_details_about_day_of_birth_of_the_person, time_of_birth = do_you_need_details_about_time_of_birth_of_the_person , location = do_you_need_details_about_place_of_residency, provider = do_you_need_details_about_primary_care_provider, care_site= do_you_need_details_about_site_of_primary_care, ethnicity = do_you_need_details_about_ethnicity_of_the_person)
 
     db.session.add(new_irb_request)
     db.session.flush()
@@ -788,20 +801,20 @@ def submitidentifierform():
     date_time = date_time.replace(" ","")
     print("date and time:",date_time)
     print('Identifier id is',new_irb_request.identifier_id)
-    templist = [person_id, gender, race_of_the_person, year_of_birth, month_of_birth, day_of_birth, time_of_birth, location, provider, care_site, ethnicity]
+    templist = [do_you_need_details_about_person_id,do_you_need_details_about_gender_of_the_person, do_you_need_details_about_race_of_the_person, do_you_need_details_about_year_of_birth_of_the_person, do_you_need_details_about_month_of_birth_of_the_person, do_you_need_details_about_day_of_birth_of_the_person, do_you_need_details_about_time_of_birth_of_the_person, do_you_need_details_about_place_of_residency, do_you_need_details_about_primary_care_provider, do_you_need_details_about_site_of_primary_care, do_you_need_details_about_ethnicity_of_the_person]
     #domainlist = [condition, condition_device, condition_drug, condition_measurement, condition_observation, condition_procedure, device, device_drug, device_observation, device_procedure, drug, drug_measurement, drug_observation, drug_procedure, measurement, measurement_procedure, measurement_observation, observation, observation_procedure, procedure, visit, specimen]
 
-    if (person_id == 'Yes'):
+    if (do_you_need_details_about_person_id == 'Yes'):
         risk = "high"
-    elif (person_id == 'No') and (gender == 'Yes') and (race_of_the_person == 'Yes'):
+    elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'Yes') and (do_you_need_details_about_race_of_the_person == 'Yes'):
         risk = "high"
-    elif (person_id == 'No') and (gender == 'No') and (race_of_the_person == 'No') and (year_of_birth == 'Yes') and (month_of_birth == 'Yes') and (day_of_birth == 'Yes'):
+    elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'No') and (do_you_need_details_about_race_of_the_person == 'No') and (do_you_need_details_about_year_of_birth_of_the_person == 'Yes') and (month_of_birth == 'Yes') and (day_of_birth == 'Yes'):
         risk = "high"
-    elif (person_id == 'No') and (gender == 'No') and (race_of_the_person == 'No') and (year_of_birth == 'No'):
+    elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'No') and (do_you_need_details_about_race_of_the_person == 'No') and (do_you_need_details_about_year_of_birth_of_the_person == 'No'):
         risk = "medium"
-    elif (person_id == 'No') and (gender == 'No') and (race_of_the_person == 'No') and (year_of_birth == 'Yes') and  (month_of_birth == 'No'):
+    elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'No') and (do_you_need_details_about_race_of_the_person == 'No') and (do_you_need_details_about_year_of_birth_of_the_person == 'Yes') and  (do_you_need_details_about_month_of_birth_of_the_person == 'No'):
         risk = "medium"
-    elif (person_id == 'No') and (gender == 'No') and (race_of_the_person == 'No') and (year_of_birth == 'Yes') and  (month_of_birth == 'Yes') and (day_of_birth == 'No'):
+    elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'No') and (do_you_need_details_about_race_of_the_person == 'No') and (do_you_need_details_about_year_of_birth_of_the_person == 'Yes') and  (do_you_need_details_about_month_of_birth_of_the_person == 'Yes') and (do_you_need_details_about_day_of_birth_of_the_person == 'No'):
         risk = "medium"
     else:
         risk = "low"
@@ -847,28 +860,28 @@ def submitidentifierform():
 def submitdomainform():
     formsubmit = IdentifierCalcForm()
     form = CreateIdentifierForm()
-    condition = form.condition.data.decision
-    condition_device = form.condition_device.data.decision
-    condition_drug = form.condition_drug.data.decision
-    condition_measurement = form.condition_measurement.data.decision
-    condition_observation = form.condition_observation.data.decision
-    condition_procedure = form.condition_procedure.data.decision
-    device = form.device.data.decision
-    device_drug = form.device_drug.data.decision
-    device_observation = form.device_observation
-    device_procedure = form.device_procedure.data.decision
-    drug = form.drug.data.decision
-    drug_measurement = form.drug_measurement.data.decision
-    drug_observation = form.drug_observation.data.decision
-    drug_procedure = form.drug_procedure.data.decision
-    measurement = form.measurement.data.decision
-    measurement_procedure = form.measurement_procedure.data.decision
-    measurement_observation = form.measurement_observation.data.decision
-    observation = form.observation.data.decision
-    observation_procedure = form.observation_procedure.data.decision
-    procedure = form.procedure.data.decision
-    visit = form.visit.data.decision
-    specimen = form.specimen.data.decision
+    do_you_need_details_about_records_suggesting_presence_of_a_disease = form.do_you_need_details_about_records_suggesting_presence_of_a_disease.data.decision
+    do_you_need_details_about_conditions_and_devices = form.do_you_need_details_about_conditions_and_devices.data.decision
+    do_you_need_details_about_conditions_and_drugs = form.do_you_need_details_about_conditions_and_drugs.data.decision
+    do_you_need_details_about_conditions_and_measures = form.do_you_need_details_about_conditions_and_measures.data.decision
+    do_you_need_details_about_conditons_and_related_spans_of_time = form.do_you_need_details_about_conditons_and_related_spans_of_time.data.decision
+    do_you_need_details_about_conditions_and_procedures = form.do_you_need_details_about_conditions_and_procedures.data.decision
+    do_you_need_details_about_person_exposure_to_devices = form.do_you_need_details_about_person_exposure_to_devices.data.decision
+    do_you_need_details_about_devices_and_drugs = form.do_you_need_details_about_devices_and_drugs.data.decision
+    do_you_need_details_about_devices_and_related_spans_of_time = form.do_you_need_details_about_devices_and_related_spans_of_time.data.decision
+    do_you_need_details_about_devices_and_procedures = form.do_you_need_details_about_devices_and_procedures.data.decision
+    do_you_need_details_about_utilization_of_drugs = form.do_you_need_details_about_utilization_of_drugs.data.decision
+    do_you_need_details_about_drugs_usage_and_related_measures = form.do_you_need_details_about_drugs_usage_and_related_measures.data.decision
+    do_you_need_details_about_drugs_usage_and_related_spans_of_time = form.do_you_need_details_about_drugs_usage_and_related_spans_of_time.data.decision
+    do_you_need_details_about_drugs_and_procedures = form.do_you_need_details_about_drugs_and_procedures.data.decision
+    do_you_need_details_about_values_of_testing = form.do_you_need_details_about_values_of_testing.data.decision
+    do_you_need_details_about_measurements_and_related_procedures = form.do_you_need_details_about_measurements_and_related_procedures.data.decision
+    do_you_need_details_about_measurements_and_related_spans_of_time = form.do_you_need_details_about_measurements_and_related_spans_of_time.data.decision
+    do_you_need_details_about_spans_of_time_where_person_is_at_risk = form.do_you_need_details_about_spans_of_time_where_person_is_at_risk.data.decision
+    do_you_need_details_about_spans_of_time_related_to_procedures = form.do_you_need_details_about_spans_of_time_related_to_procedures.data.decision
+    do_you_need_details_about_activities_carried_out_on_patients = form.do_you_need_details_about_activities_carried_out_on_patients.data.decision
+    do_you_need_details_about_visits_of_a_person = form.do_you_need_details_about_visits_of_a_person.data.decision
+    do_you_need_details_about_biological_samples_of_a_person = form.do_you_need_details_about_biological_samples_of_a_person.data.decision
     
     t = datetime.time(datetime.now())
     print('current time is',t)
@@ -880,7 +893,7 @@ def submitdomainform():
     date_time = date_time.replace(" ","")
     print("date and time:",date_time)
 
-    domainlist = [condition, condition_device, condition_drug, condition_measurement, condition_observation, condition_procedure, device, device_drug, device_observation, device_procedure, drug, drug_measurement, drug_observation, drug_procedure, measurement, measurement_procedure, measurement_observation, observation, observation_procedure, procedure, visit, specimen]
+    domainlist = [do_you_need_details_about_records_suggesting_presence_of_a_disease, do_you_need_details_about_conditions_and_devices, do_you_need_details_about_conditions_and_drugs, do_you_need_details_about_conditions_and_measures, do_you_need_details_about_conditons_and_related_spans_of_time, do_you_need_details_about_conditions_and_procedures,do_you_need_details_about_person_exposure_to_devices, do_you_need_details_about_devices_and_drugs, do_you_need_details_about_devices_and_related_spans_of_time, do_you_need_details_about_devices_and_procedures, do_you_need_details_about_utilization_of_drugs, do_you_need_details_about_drugs_usage_and_related_measures, do_you_need_details_about_drugs_usage_and_related_spans_of_time, do_you_need_details_about_drugs_and_procedures, do_you_need_details_about_values_of_testing, do_you_need_details_about_measurements_and_related_procedures, do_you_need_details_about_measurements_and_related_spans_of_time, do_you_need_details_about_spans_of_time_where_person_is_at_risk,do_you_need_details_about_spans_of_time_related_to_procedures, do_you_need_details_about_activities_carried_out_on_patients, do_you_need_details_about_visits_of_a_person,do_you_need_details_about_biological_samples_of_a_person]
     domainlist = [1 if i== "Yes" else 0 for i in domainlist]
     print('The new domainlist is', domainlist)
     postgres_insert_query = "INSERT INTO ui_irb_domain(irb_id, dm01, dm02, dm03, dm04, dm05, dm06, dm07, dm08, dm09, dm10, dm11, dm12, dm13, dm14, dm15, dm16, dm17, dm18, dm19, dm20, dm21, dm22) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"

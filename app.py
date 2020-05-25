@@ -427,7 +427,7 @@ def dashboard():
         print("pending request id is",i.trustid)
 
     
-    if(current_user.username == 'Admin'):
+    if(current_user.username == 'admin'):
         return render_template('dashboard_admin.html', name = current_user.username, pending_req= pending_req, approvedreq_info= approvedreq_info, denyreq_info=denyreq_info, resultset=resultset)
     elif(current_user.username == 'internaluser'):
         print('internal user dashboard')
