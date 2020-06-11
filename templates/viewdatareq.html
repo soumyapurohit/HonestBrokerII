@@ -12,7 +12,7 @@ Dashboard
         function view(irb_id){
                 document.getElementById(irb_id).innerHTML = irb_id;
                 //reqidnew  = "reqid"
-                var link = "{{url_for('viewpendingreq', irb_id ='irb_id') }}".replace('irb_id', irb_id);
+                var link = "{{url_for('viewdatareqdetails', irb_id ='irb_id') }}".replace('irb_id', irb_id);
                 window.location.href= link;
                 //var base_url = window.location.origin;
                 //var page_url = '/viewmyreq';
@@ -90,26 +90,63 @@ Dashboard
           </ul>
         </div>  -->
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-               <h1 class="page-header">Welcome Admin </h1>
-	       <h3></h3>
-	       <h4>User needs to fill IRB requests intially. After IRB request is approved, user will be able to create a data request. Kindly click the below link to be redirected to IRB requests details. You can review the status of IRB request</h4>
-
+               <h1 class="page-header">Welcome , {{name}}</h1>
+	       <h3>You can view the Data Requests below</h3>
                <!-- <form action =" {{url_for('request') }} " method ="get">
                         <input type = "submit"class = "btn btn-info" value="New Request">
 	       </form>-->
 
 
-         
-		 <form action =" {{url_for('viewirbreq') }} " method ="get">
-                        <input type = "submit"class = "btn btn-success" value="IRB Requests">
-                </form>
-		<h5></h5>
+          <h2 class="sub-header">IRB Requests</h2>
+          <div class="table-responsive">
+		 <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Project ID</th>
+		  <th>Name</th>
+		  <th>End Date</th>
+		  <th>Status of Request</th>
+		 
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+			{% for info_req in info_req %}
+		
+			<td><a href = "#"  onclick = "view('{{info_req.irb_id}}')" id = '{{info_req.irb_id}}'  method ="GET">{{info_req.irb_id}}</a></td>
+                      	<td id = "name">{{info_req.name}} </td>
+			<td id = "date">{{info_req.end_date}} </td>
+			<td id = "requestname">{{info_req.status}}</td>
+			<td id = "risk">{{record2}}<//td>
+                        
+                </tr>
+		{% endfor %}
 
-		<!-- <form action =" {{url_for('viewdatareq') }} " method ="get">
-                        <input type = "submit"class = "btn btn-success" value="Data Requests">
-		</form>  -->
+	
 
-            <body background="{{ url_for('static', filename='images-background5.jpeg') }}" background-repeat:no-repeat;>
+	<!--	<h2 class="sub-header">Data Requests</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Status</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                        {% for info_req in info_req %}
+                        <td id = "requestid">{{info_req.irb_id}}</td>
+			 <td id = "name">{{info_req.end_date}} </td>
+                        <td id = "requestname">{{info_req.status}}</td>
+
+
+                </tr>
+                {% endfor %}
+-->
+            <body background="{{ url_for('static', filename='images-background2.jpeg') }}" background-repeat:no-repeat;>
 	      </tbody>
             </table>
       

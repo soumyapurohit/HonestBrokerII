@@ -1,0 +1,32 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Feedback
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form  method = "POST" action="/submitinformationform">
+    <h2>Information Form</h2>
+    {{form.hidden_tag() }}
+    {{ wtf.form_field(form.name) }}
+    {{ wtf.form_field(form.project_title) }}
+    {{ wtf.form_field(form.project_summary) }}
+    {{ wtf.form_field(form.start_date,placeholder = 'DD-MM-YYYY') }}
+    {{ wtf.form_field(form.end_date,placeholder = 'DD-MM-YYYY') }}
+    {{ wtf.form_field(form.identifiers_justification) }}
+    {{ wtf.form_field(form.domain_justification) }}
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
+
+  </form>
+  <body background="{{ url_for('static', filename='images-background1.jpeg') }}" background-repeat:no-repeat;>
+</div> <!-- /container -->
+{% endblock %}

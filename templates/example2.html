@@ -2,71 +2,43 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
-Data Request Submission
+IRB Request Form Entry
 {% endblock %}
 
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}">
+		       
 {% endblock %}
 
 {% block content %}
 <div class="container">
 
-  <form class="form-signin" method = "POST" action="/submithipaaform">
-    <h2 class="form-signin-heading">Data Request Submission</h2>
-    {{form.hidden_tag() }}
-    
+  <form  method = "POST" action="/submitdataidentifierform">
+        <h2 style= "text-align: center;">Identifier Form Entry</h2>
+	    {{form.hidden_tag() }}
+
+	    <h4 style="text-align: center;">Please fill the form as Yes or No for the required fields</h4>
+
 <tr>
-    <td>{{ wtf.form_field(form.irb_id) }}</td>
-    <td>{{ wtf.form_field(form.personal_id) }}</td>
-    <td>{{ wtf.form_field(form.gender) }}</td>
-    <td>{{ wtf.form_field(form.race) }}</td>
-    <td>{{ wtf.form_field(form.birth_year) }}</td>
-    <td>{{ wtf.form_field(form.birth_month) }}</td>
-    <td>{{ wtf.form_field(form.birth_day) }}</td>
-    <td>{{ wtf.form_field(form.birth_time) }}</td>
-    <td>{{ wtf.form_field(form.location)}}</td>
-    <td>{{ wtf.form_field(form.provider)}}</td>
-    <td>{{ wtf.form_field(form.care_site)}}</td>
-    <td>{{ wtf.form_field(form.ethnicity)}}</td>
-
-    <td>{{ wtf.form_field(form.condition)}}</td>
-    <td>{{ wtf.form_field(form.device_condition)}}</td>
-    <td>{{ wtf.form_field(form.drug_condition)}}</td>
-    <td>{{ wtf.form_field(form.measurement_condition)}}</td>
-    <td>{{ wtf.form_field(form.observation_condition)}}</td>
-    <td>{{ wtf.form_field(form.procedure_condition)}}</td>
-
-    <td>{{ wtf.form_field(form.device)}}</td>
-    <td>{{ wtf.form_field(form.drug_device)}}</td>
-    <td>{{ wtf.form_field(form.drug_condition)}}</td>
-    <td>{{ wtf.form_field(form.observation_device)}}</td>
-    <td>{{ wtf.form_field(form.procedure_device)}}</td>
-
-    <td>{{ wtf.form_field(form.drug)}}</td>
-    <td>{{ wtf.form_field(form.measurement_drug)}}</td>
-    <td>{{ wtf.form_field(form.observation_drug)}}</td>
-    <td>{{ wtf.form_field(form.procedure_drug)}}</td>
-
-    <td>{{ wtf.form_field(form.measurement)}}</td>
-    <td>{{ wtf.form_field(form.observation_measurement)}}</td>
-    <td>{{ wtf.form_field(form.procedure_measurement)}}</td>
-
-    <td>{{ wtf.form_field(form.observation)}}</td>
-    <td>{{ wtf.form_field(form.procedure_observation)}}</td>
-
-    <td>{{ wtf.form_field(form.procedure)}}</td>
-    
-    <td>{{ wtf.form_field(form.visit)}}</td>
- 
-    <td>{{ wtf.form_field(form.specimen)}}</td>
    
+    <td>{{ wtf.form_field(form.irb_description) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_person_id) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_gender_of_the_person) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_race_of_the_person) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_year_of_birth_of_the_person) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_month_of_birth_of_the_person) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_day_of_birth_of_the_person) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_time_of_birth_of_the_person) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_place_of_residency) }}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_primary_care_provider)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_site_of_primary_care)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_ethnicity_of_the_person)}}</td>
 </tr>
-
-    
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+  
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
   </form>
-
+  <body background="{{ url_for('static', filename='images-background1.jpeg') }}" background-repeat:no-repeat;>
 </div> <!-- /container -->
 {% endblock %}

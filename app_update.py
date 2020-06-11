@@ -16,6 +16,7 @@ from datetime import datetime
 from wtforms_sqlalchemy.fields import QuerySelectField
 #from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','sqlite:////flask-application/building_user_login_system/start/database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -29,6 +30,7 @@ login_manager.login_view = 'login'
 #cur = conn.cursor()
 conn = psycopg2.connect("host=hbcdm.cpnsaiphh4ed.us-east-1.rds.amazonaws.com dbname=hbcdm user=hbadmin password=hbaccess")
 cur = conn.cursor()
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
@@ -72,6 +74,19 @@ class TrustChoice(UserMixin, db.Model):
     trustchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     decision = db.Column(db.String(40))
     #trustchoices = db.relationship('TrustCalcForm', backref = 'trust_choice', lazy = 'dynamic')
+
+class InformationForm(UserMixin, db.Model):
+    infoid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    project_title= db.Column(db.String(40))
+    project_summary=db.Column(db.String(40))
+    start_date=db.Column(db.String(40))
+    end_date=db.Column(db.String(40))
+    identifiers_justification=db.Column(db.String(40))
+    domain_justification=db.Column(db.String(40))
+    owner_id= db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
+    irb_id=db.Column(db.String(40))
+    status=db.Column(db.String(40))
+    name=db.Column(db.String(40))
 
 class IdentifierChoice(UserMixin, db.Model):
     identifierchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -203,6 +218,8 @@ def choice_trustcalc():
 def choice_dataset():
     return Dataset.query
 
+def choice_info():
+    return InformationForm.query
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -242,7 +259,19 @@ class CreateRequestForm(FlaskForm):
     typeofdata=StringField('What type of data would you like to receive', validators=[InputRequired(), Length(min=4, max=40)])
 
 # Minh's note: Old class.
-'''
+
+
+
+class CreateInformationForm(FlaskForm):
+    name = StringField('Please provide your name', validators=[InputRequired(), Length(min=4, max=45)])
+    project_title = StringField('Please provide the title of the project', validators=[InputRequired(), Length(min=4, max=45)])
+    project_summary =StringField('Please provide summary for the project', validators=[InputRequired(), Length(min=4, max=40)])
+    start_date = StringField('Please enter the start date',validators=[InputRequired(), Length(min=4, max=40)])
+    end_date=StringField('Please enter the end date',validators=[InputRequired(), Length(min=4, max=40)])
+    identifiers_justification=StringField('Explain about selected fields in identifier form', validators=[InputRequired(), Length(min=4, max=40)])
+    domain_justification=StringField('Explain about selected fields in domain form', validators=[InputRequired(), Length(min=4, max=40)])
+    
+
 class CreateTrustCalcForm(FlaskForm):
     #CaStatus = QuerySelectField('Enter your choice', choices=[('Yes', 'Yes'), ('No', 'No'), ('Uncertain', 'Uncertain')])
    
@@ -267,7 +296,7 @@ class CreateTrustCalcForm(FlaskForm):
      question = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
      audiotape = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
      #other = QuerySelectField(query_factory=choice_trustcalc, allow_blank=True, get_label = 'decision')
-'''
+
 
 # Minh's note: new class.
 class CreateTrustCalcForm(FlaskForm):
@@ -356,6 +385,15 @@ class CreateIdentifierForm(FlaskForm):
     do_you_need_details_about_activities_carried_out_on_patients = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
     do_you_need_details_about_visits_of_a_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
     do_you_need_details_about_biological_samples_of_a_person = QuerySelectField(query_factory=choice_identifier, allow_blank=True, get_label = 'decision')
+    
+
+    #project_title = StringField('Please provide the title od the project', validators=[InputRequired(), Length(min=4, max=45)])
+    #project_summary =StringField('Are you satisfied with the data', validators=[InputRequired(), Length(min=4, max=40)])
+    #start_date = StringField('Please enter the start date', validators=[InputRequired(), Length(min=4, max=40)])
+    #end_date=StringField('Please enter the end date', validators=[InputRequired(), Length(min=4, max=40)])
+    #identifiers_justification=StringField('Explain about selected fields in identifier form', validators=[InputRequired(), Length(min=4, max=40)])
+    #domain_justification=StringField('Explain about selected fields in domain form', validators=[InputRequired(), Length(min=4, max=40)])
+
 
 @app.route('/')
 def index():
@@ -409,10 +447,10 @@ def dashboard():
     query="select * from ui_irb_identifier"
     cur.execute(query)
     result=cur.fetchall()
-
+    
     #rows = cur.rowcount
     #query = cur.query
-
+    
     #print('Rows: ', rows)
     #print('Query: ', query)
 
@@ -420,18 +458,36 @@ def dashboard():
 
 
     #conn.close()
-    
+    res=db.session.execute('select irb_id from information_form')
+    for r in res:
+        print('res is',r)
+        #print(r['irb_id'])
+    #print(res)
+    f = open("date_time.txt","r")
+    datetime=f.read() 
 
     pending_req = TrustCalcForm.query.filter_by(status= 'pending').all()
+    #print("PR",pending_req)
     approvedreq_info = TrustCalcForm.query.filter_by(status= 'approved').all()
     denyreq_info = TrustCalcForm.query.filter_by(status= 'denied').all()
-    for i in pending_req:
-        print("pending request id is",i.trustid)
+    #for i in pending_req:
+     #   print("pending request id is",i.trustid)
 
+    info_req= InformationForm.query.filter_by(status= 'Pending').all()
+    for i in info_req:
+        print("Info request id is",i.irb_id)
     
-    if(current_user.username == 'Admin'):
-        return render_template('dashboard_admin.html', name = current_user.username, pending_req= pending_req, approvedreq_info= approvedreq_info, denyreq_info=denyreq_info, resultset=resultset)
-    elif(current_user.username == 'internaluser'):
+        pg_query = "select risk from ui_irb_identifier where irb_id = %s"
+        cur.execute(pg_query,[i.irb_id])
+        record2 = cur.fetchone()
+        print("Result is ",record2)
+    
+    if(current_user.username == 'admin'):
+        print("Date values :",r)
+        print("Res before passing :" ,res)
+        return render_template('dashboard_admin.html', record2=record2,name = current_user.username, pending_req= pending_req, approvedreq_info= approvedreq_info, denyreq_info=denyreq_info, resultset=resultset,datetime=datetime,res=res,r=r,info_req=info_req)
+    else:
+    #(current_user.username == 'internaluser'):
         print('internal user dashboard')
         apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
         request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'pending').all()
@@ -439,15 +495,15 @@ def dashboard():
         for i in apprInternal_info:
             print("Internal user approved HIPAA request is ",i.trustid)
         return render_template('dashboard.html',result = result, name = current_user.username, apprInternal_info= apprInternal_info, request_info=request_info, deniedInternal_info = deniedInternal_info, resultset = resultset)
-    else:
+    #else:
         print('external user dashboard')
-        apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
-        print('Id for external user is Hi',current_user.id)
-        request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'pending').all()
-        deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'denied').all()
-        for i in apprInternal_info:
-            print("Internal user approved request is ",i.requestname)
-        return render_template('dashboard_external.html', name = current_user.username, apprInternal_info= apprInternal_info, request_info=request_info, deniedInternal_info = deniedInternal_info, resultset = resultset)
+     #   apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
+      #  print('Id for external user is Hi',current_user.id)
+       # request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'pending').all()
+        #deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id ,status = 'denied').all()
+        #for i in apprInternal_info:
+         #   print("Internal user approved request is ",i.requestname)
+        #return render_template('dashboard_external.html', name = current_user.username, apprInternal_info= apprInternal_info, request_info=request_info, deniedInternal_info = deniedInternal_info, resultset = resultset)
 #@app.route('/dashboard_admin')
 #@login_required
 #def dashboad_admin():
@@ -462,7 +518,8 @@ def logout():
 @app.route('/hipaaform', methods=['GET','POST'])
 def hipaaform():
     print('in trust form')
-    form = CreateTrustCalcForm()
+    #form = CreateTrustCalcForm()
+    form =  CreateIdentifierForm()
     if form.validate_on_submit():
         print('Form validated')
     else:
@@ -481,39 +538,39 @@ def pendrequest():
 
 # Minh's note: old function.
 
-@app.route('/submithipaaform', methods=['GET','POST'])
-def submithipaa():
-     print(current_user.username)
-     form = CreateTrustCalcForm() 
-     irb_id = form.irb_id.data.irb_id
+#@app.route('/submithipaaform', methods=['GET','POST'])
+#def submithipaa():
+ #    print(current_user.username)
+  #   form = CreateTrustCalcForm() 
+  #   irb_id = form.irb_id.data.irb_id
 
-     radiology_images = form.radiology_images.data.decision
-     radiology_imaging_reports = form.radiology_imaging_reports.data.decision
-     ekg = form.ekg.data.decision
-     progress_notes = form.progress_notes.data.decision
-     history_phy = form.history_phy.data.decision
-     oper_report = form.oper_report.data.decision
-     path_report = form.path_report.data.decision
-     lab_report = form.lab_report.data.decision
-     photographs = form.photographs.data.decision
+#     radiology_images = form.radiology_images.data.decision
+ #    radiology_imaging_reports = form.radiology_imaging_reports.data.decision
+  #   ekg = form.ekg.data.decision
+   #  progress_notes = form.progress_notes.data.decision
+    # history_phy = form.history_phy.data.decision
+     #oper_report = form.oper_report.data.decision
+    # path_report = form.path_report.data.decision
+    # lab_report = form.lab_report.data.decision
+    # photographs = form.photographs.data.decision
      #ssn = form.ssn.data.decision
-     discharge_summaries = form.discharge_summaries.data.decision
-     health_care_billing = form.health_care_billing.data.decision
-     consult = form.consult.data.decision
-     medication = form.medication.data.decision
-     emergency  = form.emergency.data.decision
-     dental = form.dental.data.decision
-     demographic = form.demographic.data.decision
-     question = form.question.data.decision
-     audiotape = form.audiotape.data.decision
+     #discharge_summaries = form.discharge_summaries.data.decision
+     #health_care_billing = form.health_care_billing.data.decision
+     #consult = form.consult.data.decision
+     #medication = form.medication.data.decision
+     #emergency  = form.emergency.data.decision
+     #dental = form.dental.data.decision
+     #demographic = form.demographic.data.decision
+     #question = form.question.data.decision
+     #audiotape = form.audiotape.data.decision
      #other = form.other.data.decision
      
      
-     templist = [radiology_images, radiology_imaging_reports, ekg, progress_notes, history_phy, oper_report, path_report, lab_report, photographs, discharge_summaries, health_care_billing, consult, medication, emergency, dental, demographic, question, audiotape]
-     if (current_user.username == 'internaluser'):
-         userrole = 'internal_user'
-     elif (current_user.username == 'externaluser'):
-         userrole = 'external_user'
+     #templist = [radiology_images, radiology_imaging_reports, ekg, progress_notes, history_phy, oper_report, path_report, lab_report, photographs, discharge_summaries, health_care_billing, consult, medication, emergency, dental, demographic, question, audiotape]
+     #if (current_user.username == 'internaluser'):
+      #   userrole = 'internal_user'
+     #elif (current_user.username == 'externaluser'):
+      #   userrole = 'external_user'
 
      
      #item_select_query = "select itemunique from item_info  where itemname = radiology_images";
@@ -524,71 +581,98 @@ def submithipaa():
      #for i in item_info:
      #    print('item details',i)
 
-     postgreSQL_select_Query = "select * from data_policy_domain  where data_policy_domain.irb_number = %s"
-     cur.execute(postgreSQL_select_Query, [irb_id])
-     resultset = cur.fetchone()
-     print('resultset is',resultset)
-     d = resultset[1:]
+    # postgreSQL_select_Query = "select * from data_policy_domain  where data_policy_domain.irb_number = %s"
+    # cur.execute(postgreSQL_select_Query, [irb_id])
+     #resultset = cur.fetchone()
+     #print('resultset is',resultset)
+     #d = resultset[1:]
      
             
-     countmismatch = 0
-     countundecided = 0
-     countmatch = 0
-     for a,b in zip(templist, d):
-         if (a == 'Yes' and (b == '1' or b  == None)):
-             countmatch += 1
-         elif (a == 'No' and b == '1'):
-             countmismatch += 1
-         elif (a == 'No' and b == None):
-             countmatch += 1
-         elif (a == 'Uncertain' and b == '1'):
-             countundecided += 1
-         elif (a == 'Uncertain' and b == None):
-             countmatch += 1
-     N = 18
+     #countmismatch = 0
+     #countundecided = 0
+    # countmatch = 0
+     #for a,b in zip(templist, d):
+      #   if (a == 'Yes' and (b == '1' or b  == None)):
+       #      countmatch += 1
+        # elif (a == 'No' and b == '1'):
+         #    countmismatch += 1
+         #elif (a == 'No' and b == None):
+          #   countmatch += 1
+         #elif (a == 'Uncertain' and b == '1'):
+          #   countundecided += 1
+         #elif (a == 'Uncertain' and b == None):
+          #   countmatch += 1
+    # N = 18
      # beta model trust calculation
-     alpha_c = floor(countmatch + ((countundecided*countmatch)/(countmatch+countmismatch)));
-     beta_c = N - alpha_c;
-     Ei = float(alpha_c + 1)/float(alpha_c + beta_c + 2);
-     Ei = format(Ei, '.2f')
-     print('Beta model is',Ei)
+    # alpha_c = floor(countmatch + ((countundecided*countmatch)/(countmatch+countmismatch)));
+    # beta_c = N - alpha_c;
+    # Ei = float(alpha_c + 1)/float(alpha_c + beta_c + 2);
+    # Ei = format(Ei, '.2f')
+     #print('Beta model is',Ei)
     
      
      # Formula 7 of trust model
-     a = 0.7
-     Eb = float(countmatch+1.0) / float(countmatch+countmismatch+countundecided+3.0)
-     Eu = float(countundecided+1.0) / float(countmatch+countmismatch+countundecided+3.0)
-     Ew = (Eb + a*Eu)
+    # a = 0.7
+    # Eb = float(countmatch+1.0) / float(countmatch+countmismatch+countundecided+3.0)
+     #Eu = float(countundecided+1.0) / float(countmatch+countmismatch+countundecided+3.0)
+     #Ew = (Eb + a*Eu)
      
-     rEw = log(Ew)/log((1-Ew))
-     print('rEw',rEw)
+     #rEw = log(Ew)/log((1-Ew))
+    # print('rEw',rEw)
      #rEw = log(c)
-     if rEw > 0:
-         wi = 1 - exp(-abs(rEw))
-     elif rEw < 0:
-         wi = -(1 - exp(-abs(rEw)))
-     else:
-         wi = 0
-     wi = format(wi, '.2f')
-     print('dirichlet model is', wi)
+     #if rEw > 0:
+      #   wi = 1 - exp(-abs(rEw))
+    # elif rEw < 0:
+     #    wi = -(1 - exp(-abs(rEw)))
+    # else:
+     #    wi = 0
+     #wi = format(wi, '.2f')
+    # print('dirichlet model is', wi)
     
-     status = 'pending'
-     new_hipaa_request = TrustCalcForm(ownerid =  current_user.id, radiology_images = radiology_images, radiology_imaging_reports = radiology_imaging_reports, ekg = ekg, progress_notes = progress_notes, history_phy = history_phy, oper_report = oper_report, path_report = path_report, lab_report = lab_report, photographs = photographs, discharge_summaries = discharge_summaries,  health_care_billing= health_care_billing, consult = consult, medication = medication, emergency = emergency, dental  = dental, demographic = demographic,question = question, audiotape = audiotape, beta = Ei, dirichlet = wi, status = status)
-     db.session.add(new_hipaa_request)
-     db.session.commit()
+     #status = 'pending'
+     #new_hipaa_request = TrustCalcForm(ownerid =  current_user.id, radiology_images = radiology_images, radiology_imaging_reports = radiology_imaging_reports, ekg = ekg, progress_notes = progress_notes, history_phy = history_phy, oper_report = oper_report, path_report = path_report, lab_report = lab_report, photographs = photographs, discharge_summaries = discharge_summaries,  health_care_billing= health_care_billing, consult = consult, medication = medication, emergency = emergency, dental  = dental, demographic = demographic,question = question, audiotape = audiotape, beta = Ei, dirichlet = wi, status = status)
+    # db.session.add(new_hipaa_request)
+     #db.session.commit()
 
-     request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
-     for i in request_info:
-         print("the trust id is", i.trustid)
-     apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'approved').all()
-     deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status= 'denied').all()
+    # request_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
+    # for i in request_info:
+     #    print("the trust id is", i.trustid)
+     #apprInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status = 'approved').all()
+     #deniedInternal_info = TrustCalcForm.query.filter_by(ownerid=current_user.id, status= 'denied').all()
 
-     if(current_user.username == 'internaluser'):
-         return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
-     elif(current_user.username == 'externaluser'):
-         return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
-'''
+     #if(current_user.username == 'internaluser'):
+      #   return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
+     #elif(current_user.username == 'externaluser'):
+      #   return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
+
 # Minh's note: new function.
+
+
+
+@app.route('/submitinformationform',methods=['GET','POST'])
+def submitinformationform():
+    form=CreateInformationForm()
+    f = open("date_time.txt","r")
+    datetime=f.read()
+    
+    new_info_request = InformationForm(irb_id=datetime,owner_id =  current_user.id, project_title=form.project_title.data,project_summary = form.project_summary.data, start_date=form.start_date.data, end_date=form.end_date.data, identifiers_justification=form.identifiers_justification.data, domain_justification = form.domain_justification.data,status='Approved',name=form.name.data)
+    db.session.add(new_info_request)
+    # print(new_request.requestid)
+    db.session.commit()
+    status='Approved'
+    postgres_insert_query = "INSERT INTO ui_irb_information(irb_id, project_title,project_summary,start_date,end_date,identifier_justification,domain_justification,status,pi_name) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    record_to_insert =(datetime,form.project_title.data,form.project_summary.data,form.start_date.data,form.end_date.data,form.identifiers_justification.data,form.domain_justification.data,status,form.name.data)
+    cur.execute(postgres_insert_query, record_to_insert)
+    conn.commit()
+    query="select * from ui_irb_identifier"
+    cur.execute(query)
+    result=cur.fetchall()
+    for i in result:
+        print("Data", i)
+
+    return render_template('dashboard.html',result=result)
+
+
 @app.route('/submithipaaform', methods=['GET','POST'])
 def submithipaa():
      print(current_user.username)
@@ -719,7 +803,7 @@ def submithipaa():
          return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
      elif(current_user.username == 'externaluser'):
          return render_template('dashboard.html', form=form, request_info=request_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info)
-'''
+
 
 @app.route('/identifierform', methods=['GET','POST'])
 def identifierform():
@@ -732,7 +816,54 @@ def identifierform():
         print(form.errors)
     return render_template('identifier_form.html',form=form)
 
+@app.route('/submitdataidentifierform', methods=['GET','POST'])
+def submitdataidentifierform():
+    formsubmit = IdentifierCalcForm()
+    form = CreateIdentifierForm()
+    
+    irb_description = form.irb_description.data
+    do_you_need_details_about_person_id = form.do_you_need_details_about_person_id.data.decision
+    do_you_need_details_about_gender_of_the_person = form.do_you_need_details_about_gender_of_the_person.data.decision
+    do_you_need_details_about_race_of_the_person = form.do_you_need_details_about_race_of_the_person.data.decision
+    do_you_need_details_about_year_of_birth_of_the_person = form.do_you_need_details_about_year_of_birth_of_the_person.data.decision
+    do_you_need_details_about_month_of_birth_of_the_person = form.do_you_need_details_about_month_of_birth_of_the_person.data.decision
+    do_you_need_details_about_day_of_birth_of_the_person = form.do_you_need_details_about_day_of_birth_of_the_person.data.decision
+    do_you_need_details_about_time_of_birth_of_the_person = form.do_you_need_details_about_time_of_birth_of_the_person.data.decision
+    do_you_need_details_about_place_of_residency = form.do_you_need_details_about_place_of_residency.data.decision
+    do_you_need_details_about_primary_care_provider = form.do_you_need_details_about_primary_care_provider.data.decision
+    do_you_need_details_about_site_of_primary_care = form.do_you_need_details_about_site_of_primary_care.data.decision
+    do_you_need_details_about_ethnicity_of_the_person = form.do_you_need_details_about_ethnicity_of_the_person.data.decision
 
+    new_irb_request = IdentifierCalcForm(ownerid =  current_user.id,person_id = do_you_need_details_about_person_id, irb_description = irb_description , gender = do_you_need_details_about_gender_of_the_person , race_of_the_person = do_you_need_details_about_race_of_the_person, year_of_birth = do_you_need_details_about_year_of_birth_of_the_person, month_of_birth = do_you_need_details_about_month_of_birth_of_the_person, day_of_birth = do_you_need_details_about_day_of_birth_of_the_person, time_of_birth = do_you_need_details_about_time_of_birth_of_the_person , location = do_you_need_details_about_place_of_residency, provider = do_you_need_details_about_primary_care_provider, care_site= do_you_need_details_about_site_of_primary_care, ethnicity = do_you_need_details_about_ethnicity_of_the_person)
+
+    db.session.add(new_irb_request)
+    db.session.flush()
+    t = datetime.time(datetime.now())
+    print('current time is',t)
+    now = datetime.now()
+    date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
+    date_time = date_time.replace(",","")
+    date_time = date_time.replace("/","")
+    date_time = date_time.replace(":", "")
+    date_time = date_time.replace(" ","")
+    print("date and time:",date_time)
+    f= open("date_time.txt","w+")
+    f.write(date_time)
+    f.close()
+    print('Identifier id is',new_irb_request.identifier_id)
+    f = open("date_time.txt","r")
+    datetime1=f.read()
+    templist = [do_you_need_details_about_person_id,do_you_need_details_about_gender_of_the_person, do_you_need_details_about_race_of_the_person, do_you_need_details_about_year_of_birth_of_the_person, do_you_need_details_about_month_of_birth_of_the_person, do_you_need_details_about_day_of_birth_of_the_person, do_you_need_details_about_time_of_birth_of_the_person, do_you_need_details_about_place_of_residency, do_you_need_details_about_primary_care_provider, do_you_need_details_about_site_of_primary_care, do_you_need_details_about_ethnicity_of_the_person]
+    trust = 1
+    postgres_insert_query = "INSERT INTO ui_req_identifier(req_id, req_description, user_id,trust,id01, id02, id03, id04, id05, id06, id07, id08, id09, id10,id11,irb_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    record_to_insert = (date_time, irb_description,current_user.id, trust , templist[0], templist[1], templist[2], templist[3], templist[4], templist[5], templist[6], templist[7], templist[8], templist[9], templist[10],datetime1)
+    cur.execute(postgres_insert_query, record_to_insert)
+
+    conn.commit()
+    
+    return render_template('datadomain_form.html',form=form,  name = current_user.username)
+
+    
 
 @app.route('/submitidentifierform', methods=['GET','POST'])
 def submitidentifierform():                                  
@@ -800,6 +931,9 @@ def submitidentifierform():
     date_time = date_time.replace(":", "")
     date_time = date_time.replace(" ","")
     print("date and time:",date_time)
+    f= open("date_time.txt","w+")
+    f.write(date_time)
+    f.close()
     print('Identifier id is',new_irb_request.identifier_id)
     templist = [do_you_need_details_about_person_id,do_you_need_details_about_gender_of_the_person, do_you_need_details_about_race_of_the_person, do_you_need_details_about_year_of_birth_of_the_person, do_you_need_details_about_month_of_birth_of_the_person, do_you_need_details_about_day_of_birth_of_the_person, do_you_need_details_about_time_of_birth_of_the_person, do_you_need_details_about_place_of_residency, do_you_need_details_about_primary_care_provider, do_you_need_details_about_site_of_primary_care, do_you_need_details_about_ethnicity_of_the_person]
     #domainlist = [condition, condition_device, condition_drug, condition_measurement, condition_observation, condition_procedure, device, device_drug, device_observation, device_procedure, drug, drug_measurement, drug_observation, drug_procedure, measurement, measurement_procedure, measurement_observation, observation, observation_procedure, procedure, visit, specimen]
@@ -808,7 +942,7 @@ def submitidentifierform():
         risk = "high"
     elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'Yes') and (do_you_need_details_about_race_of_the_person == 'Yes'):
         risk = "high"
-    elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'No') and (do_you_need_details_about_race_of_the_person == 'No') and (do_you_need_details_about_year_of_birth_of_the_person == 'Yes') and (month_of_birth == 'Yes') and (day_of_birth == 'Yes'):
+    elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'No') and (do_you_need_details_about_race_of_the_person == 'No') and (do_you_need_details_about_year_of_birth_of_the_person == 'Yes') and (do_you_need_details_about_month_of_birth_of_the_person == 'Yes') and (do_you_need_details_about_day_of_birth_of_the_person == 'Yes'):
         risk = "high"
     elif (do_you_need_details_about_person_id == 'No') and (do_you_need_details_about_gender_of_the_person == 'No') and (do_you_need_details_about_race_of_the_person == 'No') and (do_you_need_details_about_year_of_birth_of_the_person == 'No'):
         risk = "medium"
@@ -856,10 +990,62 @@ def submitidentifierform():
 
     return render_template('domain_form.html',form=form,  name = current_user.username)
 
+@app.route('/submitdatadomainform', methods=['GET','POST'])
+def submitdatadomainform():
+    formsubmit = IdentifierCalcForm()
+    form = CreateIdentifierForm()
+    infoform=CreateInformationForm()
+    do_you_need_details_about_records_suggesting_presence_of_a_disease = form.do_you_need_details_about_records_suggesting_presence_of_a_disease.data.decision
+    do_you_need_details_about_conditions_and_devices = form.do_you_need_details_about_conditions_and_devices.data.decision
+    do_you_need_details_about_conditions_and_drugs = form.do_you_need_details_about_conditions_and_drugs.data.decision
+    do_you_need_details_about_conditions_and_measures = form.do_you_need_details_about_conditions_and_measures.data.decision
+    do_you_need_details_about_conditons_and_related_spans_of_time = form.do_you_need_details_about_conditons_and_related_spans_of_time.data.decision
+    do_you_need_details_about_conditions_and_procedures = form.do_you_need_details_about_conditions_and_procedures.data.decision
+    do_you_need_details_about_person_exposure_to_devices = form.do_you_need_details_about_person_exposure_to_devices.data.decision
+    do_you_need_details_about_devices_and_drugs = form.do_you_need_details_about_devices_and_drugs.data.decision
+    do_you_need_details_about_devices_and_related_spans_of_time = form.do_you_need_details_about_devices_and_related_spans_of_time.data.decision
+    do_you_need_details_about_devices_and_procedures = form.do_you_need_details_about_devices_and_procedures.data.decision
+    do_you_need_details_about_utilization_of_drugs = form.do_you_need_details_about_utilization_of_drugs.data.decision
+    do_you_need_details_about_drugs_usage_and_related_measures = form.do_you_need_details_about_drugs_usage_and_related_measures.data.decision
+    do_you_need_details_about_drugs_usage_and_related_spans_of_time = form.do_you_need_details_about_drugs_usage_and_related_spans_of_time.data.decision
+    do_you_need_details_about_drugs_and_procedures = form.do_you_need_details_about_drugs_and_procedures.data.decision
+    do_you_need_details_about_values_of_testing = form.do_you_need_details_about_values_of_testing.data.decision
+    do_you_need_details_about_measurements_and_related_procedures = form.do_you_need_details_about_measurements_and_related_procedures.data.decision
+    do_you_need_details_about_measurements_and_related_spans_of_time = form.do_you_need_details_about_measurements_and_related_spans_of_time.data.decision
+    do_you_need_details_about_spans_of_time_where_person_is_at_risk = form.do_you_need_details_about_spans_of_time_where_person_is_at_risk.data.decision
+    do_you_need_details_about_spans_of_time_related_to_procedures = form.do_you_need_details_about_spans_of_time_related_to_procedures.data.decision
+    do_you_need_details_about_activities_carried_out_on_patients = form.do_you_need_details_about_activities_carried_out_on_patients.data.decision
+    do_you_need_details_about_visits_of_a_person = form.do_you_need_details_about_visits_of_a_person.data.decision
+    do_you_need_details_about_biological_samples_of_a_person = form.do_you_need_details_about_biological_samples_of_a_person.data.decision
+
+    t = datetime.time(datetime.now())
+    print('current time is',t)
+    now = datetime.now()
+    #date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
+    #date_time = date_time.replace(",","")
+    #date_time = date_time.replace("/","")
+    #date_time = date_time.replace(":", "")
+    #date_time = date_time.replace(" ","")
+    #print("date and time:",date_time)
+    f = open("date_time.txt","r")
+    date_time=f.read()
+    print("date and time:",date_time)
+    domainlist = [do_you_need_details_about_records_suggesting_presence_of_a_disease, do_you_need_details_about_conditions_and_devices, do_you_need_details_about_conditions_and_drugs, do_you_need_details_about_conditions_and_measures, do_you_need_details_about_conditons_and_related_spans_of_time, do_you_need_details_about_conditions_and_procedures,do_you_need_details_about_person_exposure_to_devices, do_you_need_details_about_devices_and_drugs, do_you_need_details_about_devices_and_related_spans_of_time, do_you_need_details_about_devices_and_procedures, do_you_need_details_about_utilization_of_drugs, do_you_need_details_about_drugs_usage_and_related_measures, do_you_need_details_about_drugs_usage_and_related_spans_of_time, do_you_need_details_about_drugs_and_procedures, do_you_need_details_about_values_of_testing, do_you_need_details_about_measurements_and_related_procedures, do_you_need_details_about_measurements_and_related_spans_of_time, do_you_need_details_about_spans_of_time_where_person_is_at_risk,do_you_need_details_about_spans_of_time_related_to_procedures, do_you_need_details_about_activities_carried_out_on_patients, do_you_need_details_about_visits_of_a_person,do_you_need_details_about_biological_samples_of_a_person]
+    domainlist = [1 if i== "Yes" else 0 for i in domainlist]
+    print('The new domainlist is', domainlist)
+    postgres_insert_query = "INSERT INTO ui_irb_domain(irb_id, dm01, dm02, dm03, dm04, dm05, dm06, dm07, dm08, dm09, dm10, dm11, dm12, dm13, dm14, dm15, dm16, dm17, dm18, dm19, dm20, dm21, dm22) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    record_to_insert = (date_time, domainlist[0], domainlist[1] , domainlist[2], domainlist[3], domainlist[4], domainlist[5], domainlist[6], domainlist[7], domainlist[8], domainlist[9], domainlist[10], domainlist[11], domainlist[12], domainlist[13], domainlist[14], domainlist[15] , domainlist[16], domainlist[17], domainlist[18], domainlist[19], domainlist[20], domainlist[21])
+    cur.execute(postgres_insert_query, record_to_insert)
+    conn.commit()
+
+    return render_template('dashboard.html')
+
+
 @app.route('/submitdomainform', methods=['GET','POST'])
 def submitdomainform():
     formsubmit = IdentifierCalcForm()
     form = CreateIdentifierForm()
+    infoform=CreateInformationForm()
     do_you_need_details_about_records_suggesting_presence_of_a_disease = form.do_you_need_details_about_records_suggesting_presence_of_a_disease.data.decision
     do_you_need_details_about_conditions_and_devices = form.do_you_need_details_about_conditions_and_devices.data.decision
     do_you_need_details_about_conditions_and_drugs = form.do_you_need_details_about_conditions_and_drugs.data.decision
@@ -886,13 +1072,15 @@ def submitdomainform():
     t = datetime.time(datetime.now())
     print('current time is',t)
     now = datetime.now()
-    date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
-    date_time = date_time.replace(",","")
-    date_time = date_time.replace("/","")
-    date_time = date_time.replace(":", "")
-    date_time = date_time.replace(" ","")
+    #date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
+    #date_time = date_time.replace(",","")
+    #date_time = date_time.replace("/","")
+    #date_time = date_time.replace(":", "")
+    #date_time = date_time.replace(" ","")
+    #print("date and time:",date_time)
+    f = open("date_time.txt","r")
+    date_time=f.read()
     print("date and time:",date_time)
-
     domainlist = [do_you_need_details_about_records_suggesting_presence_of_a_disease, do_you_need_details_about_conditions_and_devices, do_you_need_details_about_conditions_and_drugs, do_you_need_details_about_conditions_and_measures, do_you_need_details_about_conditons_and_related_spans_of_time, do_you_need_details_about_conditions_and_procedures,do_you_need_details_about_person_exposure_to_devices, do_you_need_details_about_devices_and_drugs, do_you_need_details_about_devices_and_related_spans_of_time, do_you_need_details_about_devices_and_procedures, do_you_need_details_about_utilization_of_drugs, do_you_need_details_about_drugs_usage_and_related_measures, do_you_need_details_about_drugs_usage_and_related_spans_of_time, do_you_need_details_about_drugs_and_procedures, do_you_need_details_about_values_of_testing, do_you_need_details_about_measurements_and_related_procedures, do_you_need_details_about_measurements_and_related_spans_of_time, do_you_need_details_about_spans_of_time_where_person_is_at_risk,do_you_need_details_about_spans_of_time_related_to_procedures, do_you_need_details_about_activities_carried_out_on_patients, do_you_need_details_about_visits_of_a_person,do_you_need_details_about_biological_samples_of_a_person]
     domainlist = [1 if i== "Yes" else 0 for i in domainlist]
     print('The new domainlist is', domainlist)
@@ -922,8 +1110,8 @@ def submitdomainform():
     elif (current_user.username == 'external'):
         risk_user = "high"
 
-    return render_template('dashboard.html',result=result,  name = current_user.username)
-
+    #return render_template('dashboard.html',result=result,  name = current_user.username)
+    return render_template('information.html',form=infoform,  name = current_user.username)
 
 @app.route('/submitrequest', methods=['GET','POST'])
 def submitrequest():
@@ -1018,9 +1206,20 @@ def viewmyreq(req_id):
     
 
     return render_template('viewRequests.html')
-@app.route('/viewpendingreq/<req_id>', methods = ['GET',' POST'])
+
+@app.route('/viewpenreq/<requests>', methods = ['GET',' POST'])
 @login_required
-def viewpendingreq(req_id):
+def viewpenreq(requests):
+    #cur.execute("select * from ui_irb_domain")
+    #data=cur.fetchall()
+    #requests=5
+    #info_req= InformationForm.query.filter_by(status= 'Pending').all()
+    #return render_template('viewirbreq.html',info_req=info_req,data=data,requests=requests)
+    return render_template('viewirbreq.html')
+
+@app.route('/viewpendingreq/<irb_id>', methods = ['GET',' POST'])
+@login_required
+def viewpendingreq(irb_id):
     
     #reqinfo = TrustCalcForm.query.filter_by(requestid=req_id, status = 'pending').all()
     #for i in reqinfo:
@@ -1028,23 +1227,85 @@ def viewpendingreq(req_id):
     #postgreSQL_select_Query = "select * from data_catalog  where data_catalog.dataset_name = %s"
     #cur.execute(postgreSQL_select_Query, [datasetprint])
     #resultset = cur.fetchone()
-    pendingreq_info = TrustCalcForm.query.filter_by(trustid=req_id).all()
+    pendingreq_info = TrustCalcForm.query.filter_by(trustid=irb_id).all()
     #for i in pendingreq_info:
     #    datasetinfo = Dataset.query.filter_by(datasetid = i.datasetid).all()
     #for j in datasetinfo:
     #    dataset_name = j.nameset
-    #pg_query = 'select * from data_catalog where dataset_name = %s'
-    #cur.execute(pg_query,[dataset_name])
-    #record = cur.fetchone()
-    #print("Result",record)
+    pg_query = 'select * from ui_irb_identifier where irb_id = %s'
+    cur.execute(pg_query,[irb_id])
+    record = cur.fetchone()
+    print("Result",record)
 
-    
-    
+    pg_query = 'select * from ui_irb_domain where irb_id = %s'
+    cur.execute(pg_query,[irb_id])
+    record1 = cur.fetchone()
+
+
+    pg_query = 'select id02 from ui_irb_identifier where irb_id = %s'
+    cur.execute(pg_query,[irb_id])
+    record2 = cur.fetchone()
+    print("Result is ",record2)
+
+    pg_query = 'select id03 from ui_irb_identifier where irb_id = %s'
+    cur.execute(pg_query,[irb_id])
+    record3 = cur.fetchone()
+    print("Result is ",record3)
+   
+    pg_query = 'select id04 from ui_irb_identifier where irb_id = %s'
+    cur.execute(pg_query,[irb_id])
+    record4 = cur.fetchone()
+    print("Result is ",record4)   
+        
     approvedreq_info = RequestForm.query.filter_by(status= 'approved').all()
     denyreq_info = RequestForm.query.filter_by(status= 'denied').all()
-    return render_template('viewpendingRequests.html', pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info)
+    return render_template('viewpendingRequests.html', record1=record1,record2=record2,record3=record3,record4=record4,pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info,record=record)
     #return render_template('viewpendingRequests.html', pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info, record =record)
 # have to modify
+
+@app.route('/viewirbreq', methods = ['GET',' POST'])
+@login_required
+def viewirbreq():
+    #pg_query = 'select * from ui_irb_domain where irb_id = %s'
+    #cur.execute(pg_query,[irb_id])
+    #record = cur.fetchone()
+    #print("Result",record)
+    cur.execute("select * from ui_irb_information")
+    data=cur.fetchall()
+    requests=5
+    info_req= InformationForm.query.filter_by(status= 'Pending').all()
+    return render_template('viewirbreq1.html',info_req=info_req,data=data,requests=requests)
+
+
+@app.route('/viewdatareq', methods = ['GET',' POST'])
+@login_required
+def viewdatareq():
+    #pg_query = 'select * from ui_irb_domain where irb_id = %s'
+    #cur.execute(pg_query,[irb_id])
+    #record = cur.fetchone()
+    #print("Result",record)
+    info_req= InformationForm.query.filter_by(status= 'Pending').all()
+    return render_template('viewdatareq.html',info_req=info_req)
+
+@app.route('/viewdatarequest/<id>', methods = ['GET',' POST'])
+@login_required
+def viewdatarequest(id):
+    return render_template('viewdatarequest.html')
+
+@app.route('/viewdatareqdetails/<irb_id>', methods = ['GET',' POST'])
+@login_required
+def viewdatareqdetails(irb_id):
+    pg_query = 'select * from ui_irb_domain where irb_id = %s'
+    cur.execute(pg_query,[irb_id])
+    record = cur.fetchone()
+    
+    res=db.session.execute('select * from information_form')
+    for r in res:
+        print('res is',r) 
+    print("Data Request Result",record)
+    return render_template('viewdatauser.html',record=record,res=res)
+
+
 @app.route('/viewappInternal/<req_id>', methods = ['GET',' POST'])
 @login_required
 def viewappInternal(req_id):
@@ -1159,3 +1420,5 @@ def enter_request():
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', debug=True)
+
+    

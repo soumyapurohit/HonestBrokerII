@@ -1,0 +1,53 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Domain Form Entry
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form method = "POST" action="/submitdatadomainform">
+    <h2 style= "text-align: center;" >Domain Form Entry</h2>
+    {{form.hidden_tag() }}
+    <h4 style= "text-align: center;"> Please fill the form as Yes or No for the required fields</h4>
+<tr>
+   
+    <td>{{ wtf.form_field(form.do_you_need_details_about_records_suggesting_presence_of_a_disease)}} </td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_conditions_and_devices)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_conditions_and_drugs)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_conditions_and_measures)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_conditons_and_related_spans_of_time)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_conditions_and_procedures)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_person_exposure_to_devices)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_devices_and_drugs)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_devices_and_related_spans_of_time)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_devices_and_procedures)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_utilization_of_drugs)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_drugs_usage_and_related_measures)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_drugs_usage_and_related_spans_of_time)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_drugs_and_procedures)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_values_of_testing)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_measurements_and_related_procedures)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_measurements_and_related_spans_of_time)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_spans_of_time_where_person_is_at_risk)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_spans_of_time_related_to_procedures)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_activities_carried_out_on_patients)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_visits_of_a_person)}}</td>
+    <td>{{ wtf.form_field(form.do_you_need_details_about_biological_samples_of_a_person)}}</td>
+    
+   
+</tr>
+<body background="{{ url_for('static', filename='images-background1.jpeg') }}">
+    
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+  </form>
+  <body background="{{ url_for('static', filename='images-background1.jpeg') }}" background-repeat:no-repeat;>
+</div> <!-- /container -->
+{% endblock %}

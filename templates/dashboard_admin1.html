@@ -9,10 +9,10 @@ Dashboard
 {% block styles %}
 {{super()}}
 <script>
-        function view(irb_id){
-                document.getElementById(irb_id).innerHTML = irb_id;
+        function view(reqid){
+                document.getElementById(reqid).innerHTML = reqid;
                 //reqidnew  = "reqid"
-                var link = "{{url_for('viewpendingreq', irb_id ='irb_id') }}".replace('irb_id', irb_id);
+                var link = "{{url_for('viewpendingreq', req_id ='reqid') }}".replace('reqid', reqid);
                 window.location.href= link;
                 //var base_url = window.location.origin;
                 //var page_url = '/viewmyreq';
@@ -90,27 +90,32 @@ Dashboard
           </ul>
         </div>  -->
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-               <h1 class="page-header">Welcome Admin </h1>
-	       <h3></h3>
-	       <h4>User needs to fill IRB requests intially. After IRB request is approved, user will be able to create a data request. Kindly click the below link to be redirected to IRB requests details. You can review the status of IRB request</h4>
-
+               <h1 class="page-header">Welcome , {{name}}</h1>
                <!-- <form action =" {{url_for('request') }} " method ="get">
                         <input type = "submit"class = "btn btn-info" value="New Request">
 	       </form>-->
 
 
-         
-		 <form action =" {{url_for('viewirbreq') }} " method ="get">
-                        <input type = "submit"class = "btn btn-success" value="IRB Requests">
-                </form>
-		<h5></h5>
-
-		<!-- <form action =" {{url_for('viewdatareq') }} " method ="get">
-                        <input type = "submit"class = "btn btn-success" value="Data Requests">
-		</form>  -->
-
-            <body background="{{ url_for('static', filename='images-background5.jpeg') }}" background-repeat:no-repeat;>
-	      </tbody>
+          <h2 class="sub-header">Pending Request</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Request name</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+			{% for r in res %}
+                        <td id = "requestid">{{r}}</td>
+                        <td id = "requestname">{{status}}</td>
+                        <td>{{d}}</td>
+                        
+                </tr>
+		{% endfor %}
+              </tbody>
             </table>
       
       </div>

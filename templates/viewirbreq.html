@@ -26,6 +26,20 @@ Dashboard
                 //window.location.href= link;
                 //document.getElementById('req').innerHTML = reqid;
         }
+
+	 function view(requests){
+                document.getElementById(irb_id).innerHTML = irb_id;
+                //reqidnew  = "reqid"
+                var link = "{{url_for('viewpenreq', requests ='requests') }}".replace('requests', requests);
+                window.location.href= link;
+        }
+
+	function viewdatarequest(id){
+                document.getElementById(id).innerHTML = id;
+                //reqidnew  = "reqid"
+		var link = "{{url_for('viewdatarequest', id ='id')}}".replace('id', id);
+                window.location.href= link;
+	}
         //$('req').onclick(view()
         //      {alert("hello world"); })
 	function viewapprovedadmin(reqid){
@@ -90,25 +104,94 @@ Dashboard
           </ul>
         </div>  -->
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-               <h1 class="page-header">Welcome Admin </h1>
-	       <h3></h3>
-	       <h4>User needs to fill IRB requests intially. After IRB request is approved, user will be able to create a data request. Kindly click the below link to be redirected to IRB requests details. You can review the status of IRB request</h4>
-
+               <h1 class="page-header">Welcome Admin ,</h1>
+	       <h3>You can view the Data Requests below</h3>
                <!-- <form action =" {{url_for('request') }} " method ="get">
                         <input type = "submit"class = "btn btn-info" value="New Request">
 	       </form>-->
 
 
-         
-		 <form action =" {{url_for('viewirbreq') }} " method ="get">
-                        <input type = "submit"class = "btn btn-success" value="IRB Requests">
-                </form>
-		<h5></h5>
+          <h2 class="sub-header">Data Requests</h2>
+        <!--  <div class="table-responsive">
+		 <table class="table table-striped">
+              <thead>
+                <tr>
 
-		<!-- <form action =" {{url_for('viewdatareq') }} " method ="get">
-                        <input type = "submit"class = "btn btn-success" value="Data Requests">
-		</form>  -->
+                  <th>Request ID</th>
+		  <th>Name</th>
+		  <th>Project Title</th>
+		  <th>Start Date</th>
+		  <th>End Date</th>
+		  <th>Status</th>
+		   <th>requests</th>
+                </tr>
+              </thead>
+              <tbody>
+		      <tr> -->
+		
+		
+		
+<table class="table table-striped">
+  <tr>
+    <th>Data Request ID</th>
+    <th>IRB ID</th>
+    <th>Request Description</th>
+    <th>Requester</th>
+    <th>Request Data</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+	<td><a href = "#"  onclick = "viewdatarequest('{{2020060721}}')" id = '{{2020060721}}'  method ="GET">{{2020060721}}</a></td>
+ 
+    <td>20200609150354</td>
+    <td>Our team requires medical info details</td>
+    <td>Internal User</td>
+    <td>06-07-2020</td>
+    <td>Approved</td>
 
+  </tr>
+   <tr>
+	   <td><a href = "#"  onclick = "viewdatarequest('{{2020060121}}')" id = '{{2020060121}}'  method ="GET">{{2020060121}}</a></td>
+    
+    <td>20200609150354</td>
+    <td>Our team requires drug info details</td>
+    <td>Internal User</td>
+    <td>06-01-2020</td>
+    <td>Approved</td>
+
+  </tr>
+  <tr>
+	  <td><a href = "#"  onclick = "viewdatarequest('{{2020050721}}')" id = '{{20200050721}}'  method ="GET">{{2020050721}}</a></td>
+  
+    <td>20200609150354</td>
+    <td>Our team requires patient info details</td>
+    <td>Internal User</td>
+    <td>05-07-2020</td>
+    <td>Approved</td>
+
+  </tr>
+  <tr>
+	  <td><a href = "#"  onclick = "viewdatarequest('{{2020060321}}')" id = '{{2020060321}}'  method ="GET">{{2020060321}}</a></td>
+   
+    <td>20200609150354</td>
+    <td>Our team requires medical info details</td>
+    <td>External User</td>
+    <td>06-03-2020</td>
+    <td>Submitted</td>
+
+  </tr>
+  <tr>
+	  <td><a href = "#"  onclick = "viewdatarequest('{{2020060721}}')" id = '{{2020060721}}'  method ="GET">{{2020060721}}</a></td>
+   
+    <td>20200609150354</td>
+    <td>Our team requires patient count details</td>
+    <td>External User</td>
+    <td>06-07-2020</td>
+    <td>Pending</td>
+
+  </tr>
+
+</table>
             <body background="{{ url_for('static', filename='images-background5.jpeg') }}" background-repeat:no-repeat;>
 	      </tbody>
             </table>

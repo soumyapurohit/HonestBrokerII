@@ -58,10 +58,10 @@ Data Requests Details
               </thead>
               <tbody>
                 
-			
+			{% for item in res %}
            		    <tr> 
 				    
-				    <td>{{record[1]}}</td>
+				    <td>{{item[1]}}</td>
 			    
 			   
                               	    <td>{{record[2]}}</td>
@@ -121,6 +121,7 @@ Data Requests Details
 			       
 			
                             </tr>
+			    {% endfor %}
 <body background="{{ url_for('static', filename='images-background1.jpeg') }}" background-repeat:no-repeat;>
                     </tbody>
  </table>
