@@ -37,6 +37,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
     requests = db.relationship('RequestForm', backref = 'user', lazy = 'dynamic')
+    userrole = db.Column(db.String(50), unique=True)
 
 class Dataset(UserMixin, db.Model):
     datasetid = db.Column(db.Integer, primary_key=True)
@@ -74,6 +75,14 @@ class TrustChoice(UserMixin, db.Model):
     trustchoiceid = db.Column(db.Integer, primary_key = True, autoincrement = True)
     decision = db.Column(db.String(40))
     #trustchoices = db.relationship('TrustCalcForm', backref = 'trust_choice', lazy = 'dynamic')
+
+class Risk(UserMixin, db.Model):
+    riskid = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    Ir=db.Column(db.String(40))
+    Er=db.Column(db.String(40))
+    Ur=db.Column(db.String(40))
+    Tr=db.Column(db.String(40))
+    irb_id=db.Column(db.String(40))
 
 class InformationForm(UserMixin, db.Model):
     infoid = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -240,7 +249,8 @@ class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=50)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=6, max=80)])
     remember = BooleanField('remember me')
-
+    userrole = StringField('userrole', validators=[InputRequired(), Length(min=4, max=50)])
+    
 class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length( max=45)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=50)])
@@ -407,6 +417,42 @@ def login():
         if user:
             if user.password == form.password.data:
                 login_user(user, remember=form.remember.data)
+                if form.userrole.data=='Internal affiliated professor':
+                    ur='L'
+                    f= open("user_role.txt","w+")
+                    f.write(ur)
+                    f.close()
+                elif form.userrole.data=='Internal affiliated Research Assistant':
+                    ur='M'
+                    f= open("user_role.txt","w+")
+                    f.write(ur)
+                    f.close()
+                elif form.userrole.data=='Internal affiliated Student':
+                    ur='M'
+                    f= open("user_role.txt","w+")
+                    f.write(ur)
+                    f.close()
+                elif form.userrole.data=='Internal non-affiliated professor':
+                    ur='L'
+                    f= open("user_role.txt","w+")
+                    f.write(ur)
+                    f.close()
+                elif form.userrole.data=='Internal non-affiliated Research Assistant':
+                    ur='M'
+                    f= open("user_role.txt","w+")
+                    f.write(ur)
+                    f.close()
+                elif form.userrole.data=='Internal non-affiliated Student':
+                    ur='M'
+                    f= open("user_role.txt","w+")
+                    f.write(ur)
+                    f.close()
+                elif form.userrole.data=='External collaborator':
+                    ur='H'
+                    f= open("user_role.txt","w+")
+                    f.write(ur)
+                    f.close()
+
                 return redirect(url_for('dashboard'))
         return '<h1> Invalid Username or password </h1>'
 
@@ -855,11 +901,20 @@ def submitdataidentifierform():
     datetime1=f.read()
     templist = [do_you_need_details_about_person_id,do_you_need_details_about_gender_of_the_person, do_you_need_details_about_race_of_the_person, do_you_need_details_about_year_of_birth_of_the_person, do_you_need_details_about_month_of_birth_of_the_person, do_you_need_details_about_day_of_birth_of_the_person, do_you_need_details_about_time_of_birth_of_the_person, do_you_need_details_about_place_of_residency, do_you_need_details_about_primary_care_provider, do_you_need_details_about_site_of_primary_care, do_you_need_details_about_ethnicity_of_the_person]
     trust = 1
+    templist = [1 if i== "Yes" else 0 for i in templist]
+    print('The new domain templist is', templist)
+
     postgres_insert_query = "INSERT INTO ui_req_identifier(req_id, req_description, user_id,trust,id01, id02, id03, id04, id05, id06, id07, id08, id09, id10,id11,irb_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     record_to_insert = (date_time, irb_description,current_user.id, trust , templist[0], templist[1], templist[2], templist[3], templist[4], templist[5], templist[6], templist[7], templist[8], templist[9], templist[10],datetime1)
     cur.execute(postgres_insert_query, record_to_insert)
 
     conn.commit()
+    query="select * from ui_req_identifier"
+    cur.execute(query)
+    result=cur.fetchall()
+    for i in result:
+        print("Data", i)
+
     
     return render_template('datadomain_form.html',form=form,  name = current_user.username)
 
@@ -954,6 +1009,34 @@ def submitidentifierform():
         risk = "low"
     
     print('the risk is',risk)
+    Ir=risk
+    Er='M'
+    f = open("user_role.txt","r")
+    Ur=f.read()
+    if(Ir=='low' and Er=='L' and Ur=='L'):
+        Tr='Low'
+        print("Total risk :",Tr)
+    elif(Ir=='high' or Er=='H' or Ur=='H'):
+        Tr='High'
+        print("Total risk :",Tr)
+    else:
+        Tr='Medium'
+        print("Total risk :",Tr)
+    irb_id=date_time
+    #new_info_risk = Risk(Ir==Ir,Er==Er,Ur==Ur,Tr==Tr,irb_id==date_time)
+    #db.session.add(new_info_risk)
+    # print(new_request.requestid)
+    #db.session.commit()
+    postgres_insert_query = "INSERT INTO ui_irb_risk(irb_id, i_r,u_r,e_r,r_t) VALUES (%s,%s,%s,%s,%s)"
+    record_to_insert =(date_time,Ir,Ur,Er,Tr)
+    cur.execute(postgres_insert_query, record_to_insert)
+    conn.commit()
+    query="select * from ui_irb_risk"
+    cur.execute(query)
+    result=cur.fetchall()
+    for i in result:
+        print("Risk Values are", i)
+
     templist = [1 if i== "Yes" else 0 for i in templist]
     print('The new templist is', templist)
     #domainlist = [1 if i== "Yes" else 0 for i in domainlist]  
@@ -1021,22 +1104,31 @@ def submitdatadomainform():
     t = datetime.time(datetime.now())
     print('current time is',t)
     now = datetime.now()
-    #date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
-    #date_time = date_time.replace(",","")
-    #date_time = date_time.replace("/","")
-    #date_time = date_time.replace(":", "")
-    #date_time = date_time.replace(" ","")
-    #print("date and time:",date_time)
-    f = open("date_time.txt","r")
-    date_time=f.read()
+    date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
+    date_time = date_time.replace(",","")
+    date_time = date_time.replace("/","")
+    date_time = date_time.replace(":", "")
+    date_time = date_time.replace(" ","")
     print("date and time:",date_time)
+    f = open("date_time.txt","r")
+    datetime1=f.read()
+    print("date and time:",datetime1)
     domainlist = [do_you_need_details_about_records_suggesting_presence_of_a_disease, do_you_need_details_about_conditions_and_devices, do_you_need_details_about_conditions_and_drugs, do_you_need_details_about_conditions_and_measures, do_you_need_details_about_conditons_and_related_spans_of_time, do_you_need_details_about_conditions_and_procedures,do_you_need_details_about_person_exposure_to_devices, do_you_need_details_about_devices_and_drugs, do_you_need_details_about_devices_and_related_spans_of_time, do_you_need_details_about_devices_and_procedures, do_you_need_details_about_utilization_of_drugs, do_you_need_details_about_drugs_usage_and_related_measures, do_you_need_details_about_drugs_usage_and_related_spans_of_time, do_you_need_details_about_drugs_and_procedures, do_you_need_details_about_values_of_testing, do_you_need_details_about_measurements_and_related_procedures, do_you_need_details_about_measurements_and_related_spans_of_time, do_you_need_details_about_spans_of_time_where_person_is_at_risk,do_you_need_details_about_spans_of_time_related_to_procedures, do_you_need_details_about_activities_carried_out_on_patients, do_you_need_details_about_visits_of_a_person,do_you_need_details_about_biological_samples_of_a_person]
     domainlist = [1 if i== "Yes" else 0 for i in domainlist]
     print('The new domainlist is', domainlist)
-    postgres_insert_query = "INSERT INTO ui_irb_domain(irb_id, dm01, dm02, dm03, dm04, dm05, dm06, dm07, dm08, dm09, dm10, dm11, dm12, dm13, dm14, dm15, dm16, dm17, dm18, dm19, dm20, dm21, dm22) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    record_to_insert = (date_time, domainlist[0], domainlist[1] , domainlist[2], domainlist[3], domainlist[4], domainlist[5], domainlist[6], domainlist[7], domainlist[8], domainlist[9], domainlist[10], domainlist[11], domainlist[12], domainlist[13], domainlist[14], domainlist[15] , domainlist[16], domainlist[17], domainlist[18], domainlist[19], domainlist[20], domainlist[21])
+    trust=1
+    dm22=1
+    dm23=0
+    postgres_insert_query = "INSERT INTO ui_req_domain(req_id, dm01, dm02, dm03, dm04, dm05, dm06, dm07, dm08, dm09, dm10, dm11, dm12, dm13, dm14, dm15, dm16, dm17, dm18, dm19, dm20, dm21, dm22,dm23,dm24,irb_id,trust) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    record_to_insert = (date_time,domainlist[0], domainlist[1] , domainlist[2], domainlist[3], domainlist[4], domainlist[5], domainlist[6], domainlist[7], domainlist[8], domainlist[9], domainlist[10], domainlist[11], domainlist[12], domainlist[13], domainlist[14], domainlist[15] , domainlist[16], domainlist[17], domainlist[18], domainlist[19], domainlist[20], domainlist[21],dm22,dm23,datatime1,trust)
     cur.execute(postgres_insert_query, record_to_insert)
     conn.commit()
+    query="select * from ui_req_domain"
+    cur.execute(query)
+    result=cur.fetchall()
+    for i in result:
+        print("Data", i)
+
 
     return render_template('dashboard.html')
 
@@ -1217,6 +1309,17 @@ def viewpenreq(requests):
     #return render_template('viewirbreq.html',info_req=info_req,data=data,requests=requests)
     return render_template('viewirbreq.html')
 
+
+@app.route('/viewdetailsPI/<name>', methods = ['GET',' POST'])
+@login_required
+def viewdetailsPI(name):
+    return render_template('viewname.html')
+
+@app.route('/viewdetailsTI/<title>', methods = ['GET',' POST'])
+@login_required
+def viewdetailsTI(title):
+    return render_template('viewtitle.html')
+
 @app.route('/viewpendingreq/<irb_id>', methods = ['GET',' POST'])
 @login_required
 def viewpendingreq(irb_id):
@@ -1237,10 +1340,18 @@ def viewpendingreq(irb_id):
     record = cur.fetchone()
     print("Result",record)
 
+    pg_query = 'select * from ui_irb_risk'
+    cur.execute(pg_query)
+    recordrisk = cur.fetchone()
+    print("Result of risk values",recordrisk)
+    
     pg_query = 'select * from ui_irb_domain where irb_id = %s'
     cur.execute(pg_query,[irb_id])
     record1 = cur.fetchone()
-
+    
+    pg_query = 'select * from ui_irb_information where irb_id = %s'
+    cur.execute(pg_query,[irb_id])
+    recordinfo = cur.fetchone()
 
     pg_query = 'select id02 from ui_irb_identifier where irb_id = %s'
     cur.execute(pg_query,[irb_id])
@@ -1259,9 +1370,18 @@ def viewpendingreq(irb_id):
         
     approvedreq_info = RequestForm.query.filter_by(status= 'approved').all()
     denyreq_info = RequestForm.query.filter_by(status= 'denied').all()
-    return render_template('viewpendingRequests.html', record1=record1,record2=record2,record3=record3,record4=record4,pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info,record=record)
+    return render_template('viewpendingRequests.html',recordinfo=recordinfo,recordrisk=recordrisk, record1=record1,record2=record2,record3=record3,record4=record4,pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info,record=record)
     #return render_template('viewpendingRequests.html', pendingreq_info = pendingreq_info, approvedreq_info=approvedreq_info, denyreq_info=denyreq_info, record =record)
 # have to modify
+@app.route('/viewriskinfo', methods = ['GET',' POST'])
+@login_required
+def viewriskinfo():
+    pg_query = 'select * from ui_irb_risk'
+    cur.execute(pg_query)
+    recordrisk = cur.fetchone()
+    print("Result of risk values",recordrisk)
+    return render_template('viewriskinfo.html',recordrisk=recordrisk)
+
 
 @app.route('/viewirbreq', methods = ['GET',' POST'])
 @login_required

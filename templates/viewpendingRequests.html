@@ -55,21 +55,21 @@ Sign Up
 	<h4> Below are the details of the fields which the researcher/user requested : 1 - Yes ; 0 - No</h4>
 
 	<h5> </h5>
-	 <table class="table table-bordered">
-
+	 <table class="table table-bordered" style="border-color:black;">
+		 <h3> Identifier fields</h3>
               <thead>
                 <tr>
-                  <th>Person ID</th>
-                  <th>Gender</th>
-		  <th>Race</th>
-		  <th>Year of Birth</th>
-		  <th>Month of Birth</th>
-		  <th>Day of Birth</th>
-		  <th>Time of Birth</th>
-		  <th>Place of Residency</th>
-			<th>Primary Care Provider</th>
-		  <th>Site of Primary Care</th>
-		  <th>Ethnicity</th>
+                  <th style="border-color:black;">Person ID</th>
+                  <th style="border-color:black;">Gender</th>
+		  <th style="border-color:black;">Race</th>
+		  <th style="border-color:black;">Year of Birth</th>
+		  <th style="border-color:black;">Month of Birth</th>
+		  <th style="border-color:black;">Day of Birth</th>
+		  <th style="border-color:black;">Time of Birth</th>
+		  <th style="border-color:black;">Place of Residency</th>
+			<th style="border-color:black;">Primary Care Provider</th>
+		  <th style="border-color:black;">Site of Primary Care</th>
+		  <th style="border-color:black;">Ethnicity</th>
 					  
                 </tr>
               </thead>
@@ -79,125 +79,145 @@ Sign Up
                    
 			    <tr> 
 				    
-				    <td>{{record[4]}}</td>
+				    <td style="border-color:black;">{{record[4]}}</td>
 			    
 			   
-                              	    <td>{{record[5]}}</td>
+                              	    <td style="border-color:black;">{{record[5]}}</td>
 			    
-				    <td>{{record[6]}}</td>
+				    <td style="border-color:black;">{{record[6]}}</td>
 			    
-				    <td>{{record[7]}}</td>
-			    
-			   
-				    <td>{{record[8]}}</td>
+				    <td style="border-color:black;">{{record[7]}}</td>
 			    
 			   
-				    <td>{{record[9]}}</td>
+				    <td style="border-color:black;">{{record[8]}}</td>
 			    
 			   
-				    <td>{{record[10]}}</td>
-			   
-			   
-				    <td>{{record[11]}}</td>
+				    <td style="border-color:black;">{{record[9]}}</td>
 			    
 			   
-				    <td>{{record[12]}}</td>
+				    <td style="border-color:black;">{{record[10]}}</td>
+			   
+			   
+				    <td style="border-color:black;">{{record[11]}}</td>
 			    
 			   
-				    <td>{{record[13]}}</td>
+				    <td style="border-color:black;">{{record[12]}}</td>
+			    
+			   
+				    <td style="border-color:black;">{{record[13]}}</td>
 			    
 			    
-				    <td>{{record[14]}}</td>
+				    <td style="border-color:black;">{{record[14]}}</td>
 			   
 			       
 			
                             </tr>
+     	</tbody>
 
- <table class="table table-bordered">
+	 </table> 
+
+      <h3> Identifier Justification</h3>
+ <table class="table table-bordered" style="border-color:black;"> 
 
               <thead>
                 <tr>
-                  <th>Condition</th>
-                  <th>Condition/Device</th>
-                  <th>Condition/Drug</th>
-                  <th>Condition/Measurement</th>
-                  <th>Condition/Observation</th>
-                  <th>Condition/Procedure</th>
-                  <th>Device</th>
-                  <th>Device/Drug</th>
-                  <th>Device/Observation</th>
-                  <th>Device/Procedure</th>
-                  <th>Drug</th>
-                  <th>Drug/Measurement</th>
-                  <th>Drug/Observation</th>
-                  <th>Drug/Procedure</th>
-                  <th>Measurement</th>
-                  <th>Measurement/Procedure</th>
-                  <th>Mesaurement/Observation</th>
-                  <th>Observation</th>
-                  <th>Observation/Procedure</th>
-                  <th>Procedure</th>
-                  <th>Visit</th>
-                  <th>Specimen</th>
+                  <th style="border-color:black;">Justification</th>
+                </tr>
+              </thead>
+              <tbody>
+                      <tr>
+                              <td style="border-color:black;">{{recordinfo[5]}}</td>
+                        </tr>
+                </tbody>
+
+        </table>
+ <h3> Domain fields</h3>
+
+ <table class="table table-bordered" style="border-color:black;">
+
+              <thead>
+                <tr>
+                  <th style="border-color:black;">Condition</th>
+                  <th style="border-color:black;">Condition/Device</th>
+                  <th style="border-color:black;">Condition/Drug</th>
+                  <th style="border-color:black;">Condition/Measurement</th>
+                  <th style="border-color:black;">Condition/Observation</th>
+                  <th style="border-color:black;">Condition/Procedure</th>
+                  <th style="border-color:black;">Device</th>
+                  <th style="border-color:black;">Device/Drug</th>
+                  <th style="border-color:black;">Device/Observation</th>
+                  <th style="border-color:black;">Device/Procedure</th>
+                  <th style="border-color:black;">Drug</th>
+                  <th style="border-color:black;">Drug/Measurement</th>
+                  <th style="border-color:black;">Drug/Observation</th>
+                  <th style="border-color:black;">Drug/Procedure</th>
+                  <th style="border-color:black;">Measurement</th>
+                  <th style="border-color:black;">Measurement/Procedure</th>
+                  <th style="border-color:black;">Mesaurement/Observation</th>
+                  <th style="border-color:black;">Observation</th>
+                  <th style="border-color:black;">Observation/Procedure</th>
+                  <th style="border-color:black;">Procedure</th>
+                  <th style="border-color:black;">Visit</th>
+                  <th style="border-color:black;">Specimen</th>
                 </tr>
               </thead>
               <tbody>
  <tr>
 
-                                    <td>{{record1[1]}}</td>
+                                    <td style="border-color:black;">{{record1[1]}}</td>
 
 
-                                    <td>{{record1[2]}}</td>
+                                    <td style="border-color:black;">{{record1[2]}}</td>
 
-                                    <td>{{record1[3]}}</td>
+                                    <td style="border-color:black;">{{record1[3]}}</td>
 
-                                    <td>{{record1[4]}}</td>
-
-
-                                    <td>{{record1[5]}}</td>
+                                    <td style="border-color:black;">{{record1[4]}}</td>
 
 
-                                    <td>{{record1[6]}}</td>
+                                    <td style="border-color:black;">{{record1[5]}}</td>
 
 
-                                    <td>{{record1[7]}}</td>
+                                    <td style="border-color:black;">{{record1[6]}}</td>
 
 
-                                    <td>{{record1[8]}}</td>
+                                    <td style="border-color:black;">{{record1[7]}}</td>
 
 
-                                    <td>{{record1[9]}}</td>
+                                    <td style="border-color:black;">{{record1[8]}}</td>
 
 
-                                    <td>{{record1[10]}}</td>
+                                    <td style="border-color:black;">{{record1[9]}}</td>
 
 
-                                    <td>{{record1[11]}}</td>
-                                    <td>{{record1[12]}}</td>
-                                    <td>{{record1[13]}}</td>
-
-                                    <td>{{record1[14]}}</td>
-				  <td>{{record1[15]}}</td>
+                                    <td style="border-color:black;">{{record1[10]}}</td>
 
 
-                                    <td>{{record1[16]}}</td>
+                                    <td style="border-color:black;">{{record1[11]}}</td>
+                                    <td style="border-color:black;">{{record1[12]}}</td>
+                                    <td style="border-color:black;">{{record1[13]}}</td>
+
+                                    <td style="border-color:black;">{{record1[14]}}</td>
+				  <td style="border-color:black;">{{record1[15]}}</td>
 
 
-                                    <td>{{record1[17]}}</td>
+                                    <td style="border-color:black;">{{record1[16]}}</td>
 
 
-                                    <td>{{record1[18]}}</td>
+                                    <td style="border-color:black;">{{record1[17]}}</td>
 
 
-                                    <td>{{record1[19]}}</td>
+                                    <td style="border-color:black;">{{record1[18]}}</td>
 
 
-                                    <td>{{record1[20]}}</td>
+                                    <td style="border-color:black;">{{record1[19]}}</td>
 
 
-                                    <td>{{record1[21]}}</td>
-                                        <td>{{record1[22]}}</td>
-<td>{{record1[23]}}</td>
+                                    <td style="border-color:black;">{{record1[20]}}</td>
+
+
+                                    <td style="border-color:black;">{{record1[21]}}</td>
+                                        <td style="border-color:black;">{{record1[22]}}</td>
+<td style="border-color:black;">{{record1[23]}}</td>
 
 
 
@@ -205,7 +225,25 @@ Sign Up
  </table>
 
 
+ <h3> Domain Justification</h3>
+ <table class="table table-bordered" style="border-color:black;">
 
+              <thead>
+                <tr>
+                  <th style="border-color:black;" .font-italic >Justification</th>
+		</tr>
+	      </thead>
+	      <tbody>
+		      <tr>
+			      <td style="border-color:black;">{{recordinfo[6]}}</td>
+			</tr>
+		</tbody>
+
+	</table>
+
+                 <form action =" {{url_for('viewriskinfo') }} " method ="get">
+                        <input type = "submit"class = "btn btn-success" value="Risk Values">
+                </form>
 
 <body background="{{ url_for('static', filename='images-background5.jpeg') }}" background-repeat:no-repeat;>
                     </tbody>

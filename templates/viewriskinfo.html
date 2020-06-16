@@ -9,7 +9,7 @@ Dashboard
 {% block styles %}
 {{super()}}
 <script>
-        function viewpenireq(irb_id){
+        function view(irb_id){
                 document.getElementById(irb_id).innerHTML = irb_id;
                 //reqidnew  = "reqid"
                 var link = "{{url_for('viewpendingreq', irb_id ='irb_id') }}".replace('irb_id', irb_id);
@@ -26,25 +26,6 @@ Dashboard
                 //window.location.href= link;
                 //document.getElementById('req').innerHTML = reqid;
         }
-
-	function viewdetailsPI(name){
-                //document.getElementById(name).innerHTML = name;
-                //reqidnew  = "reqid"
-                var link = "{{url_for('viewdetailsPI', name ='name') }}".replace('name', name);
-                window.location.href= link;
-	}
-	function viewdetailsTI(title){
-                //document.getElementById(title).innerHTML = title;
-                //reqidnew  = "reqid"
-                var link = "{{url_for('viewdetailsTI', title ='title') }}".replace('title',title);
-                window.location.href= link;
-	}
-	function view(requests){
-                document.getElementById(requests).innerHTML = requests;
-                //reqidnew  = "reqid"
-                var link = "{{url_for('viewpenreq', requests ='requests') }}".replace('requests', requests);
-                window.location.href= link;
-	}
         //$('req').onclick(view()
         //      {alert("hello world"); })
 	function viewapprovedadmin(reqid){
@@ -109,69 +90,49 @@ Dashboard
           </ul>
         </div>  -->
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-               <h1 class="page-header">Welcome Admin, {{name}}</h1>
-	       <h3>You can view the IRB Requests below</h3>
+               <h1 class="page-header">Welcome Admin </h1>
+	       <h3></h3>
+	       <h4>Re-directing to dashboard</h4>
+
                <!-- <form action =" {{url_for('request') }} " method ="get">
                         <input type = "submit"class = "btn btn-info" value="New Request">
 	       </form>-->
 
 
-          <h2 class="sub-header">IRB Requests</h2>
-          <div class="table-responsive">
-		 <table class="table table-striped"  style="width:1000px">
+         
+		 <form action =" {{url_for('dashboard') }} " method ="get">
+                        <input type = "submit"class = "btn btn-success" value="Back">
+                </form>
+		<h5></h5>
+
+		<!-- <form action =" {{url_for('viewdatareq') }} " method ="get">
+                        <input type = "submit"class = "btn btn-success" value="Data Requests">
+		</form>  -->
+			
+
+		 <h3> Risk Values</h3>
+ <table class="table table-bordered" style="border-color:black;">
+
               <thead>
                 <tr>
-
-                  <th>IRB ID</th>
-		  <th>Name</th>
-		  <th>Project Title</th>
-		  <th>Start Date</th>
-		  <th>End Date</th>
-		  <th>Status of Request</th>
-		  <th>No. of Data Requests</th> 
-                </tr>
-              </thead>
-              <tbody>
-       
-		 <tr>
-                        {% for i in data %}
-
-                        <td><a href = "#"  onclick = "viewpenireq('{{i[0]}}')" id = '{{i[0]}}'  method ="GET">{{i[0]}}</a></td>
-                        <td><a href = "#"  onclick = "viewdetailsPI('{{i[8]}}')" name = '{{i[8]}}'  method ="GET">{{i[8]}}</a></td>
-			<td><a href = "#"  onclick = "viewdetailsTI('{{i[1]}}')" title = '{{i[1]}}'  method ="GET">{{i[1]}}</a></td>
-                        <td id = "startdate">{{i[3]}}</td>
-                        <td id = "enddate">{{i[4]}}<//td>
-                        <td id = "status">{{i[7]}}<//td>
-                                <!--  <td id = "requests">{{requests}}</td> -->
-                         <td><a href = "#"  onclick = "view('{{requests}}')" id = '{{requests}}'  method ="GET">{{requests}}</a></td>
-
-                </tr>
-
-		{% endfor %}
-
-
-	<!--	<h2 class="sub-header">Data Requests</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Status</th>
+                        <th style="border-color:black;" .font-italic > Identifier Risk</th>
+                        <th style="border-color:black;" .font-italic > User Risk</th>
+                        <th style="border-color:black;" .font-italic > Requester Risk</th>
+                        <th style="border-color:black;" .font-italic > Overall Risk</th>
 
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                        {% for info_req in info_req %}
-                        <td id = "requestid">{{info_req.irb_id}}</td>
-			 <td id = "name">{{info_req.end_date}} </td>
-                        <td id = "requestname">{{info_req.status}}</td>
+                      <tr>
+                              <td style="border-color:black;">{{recordrisk[1]}}</td>
+                              <td style="border-color:black;">{{recordrisk[2]}}</td>
+                              <td style="border-color:black;">{{recordrisk[3]}}</td>
+                              <td style="border-color:black;">{{recordrisk[4]}}</td>
+                        </tr>
+                </tbody>
 
+        </table>
 
-                </tr>
-                {% endfor %}
--->
             <body background="{{ url_for('static', filename='images-background5.jpeg') }}" background-repeat:no-repeat;>
 	      </tbody>
             </table>
