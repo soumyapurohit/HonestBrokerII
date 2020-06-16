@@ -494,6 +494,10 @@ def dashboard():
     cur.execute(query)
     result=cur.fetchall()
     
+    pg_query = 'DESCRIBE table ui_irb_domain'
+    cur.execute(pg_query)
+    record = cur.fetchone()
+    print("Record is", record)
     #rows = cur.rowcount
     #query = cur.query
     
